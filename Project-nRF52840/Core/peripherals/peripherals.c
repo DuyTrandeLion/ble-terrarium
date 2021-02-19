@@ -4,33 +4,19 @@
 #include "nrf_gpio.h"
 #include "app_timer.h"
 #include "nrf_drv_timer.h"
-#if defined (UART_PRESENT)
-#include "nrf_uart.h"
-#endif
-#if defined (UARTE_PRESENT)
-#include "nrf_uarte.h"
-#endif
-#include "app_uart.h"
 #include "nrf_drv_twi.h"
 #include "nrf_drv_spi.h"
 #include "nrf_drv_timer.h"
 
 
-static const nrf_drv_twi_t m_gbc_twi      = NRF_DRV_TWI_INSTANCE(GBC_TWI_INSTANCE);
-static const nrf_drv_twi_t m_ecompass_twi = NRF_DRV_TWI_INSTANCE(ECOMPASS_TWI_INSTANCE);
-static const nrf_drv_timer_t m_gnss_timer = NRF_DRV_TIMER_INSTANCE(GNSS_TIMER_INSTANCE);
-static const nrf_drv_timer_t m_ubx_timer  = NRF_DRV_TIMER_INSTANCE(GNSS_UBX_TIMER_INSTANCE);
-static const nrf_drv_spi_t m_oled_spi     = NRF_DRV_SPI_INSTANCE(OLED_SPI_INSTANCE);
+static const nrf_drv_twi_t m_baro_twi       = NRF_DRV_TWI_INSTANCE(BARO_TWI_INSTANCE);
+static const nrf_drv_twi_t m_eep_twi        = NRF_DRV_TWI_INSTANCE(EEP_TWI_INSTANCE);
+static const nrf_drv_spi_t m_env_spi        = NRF_DRV_SPI_INSTANCE(ENV_SPI_INSTANCE);
+static const nrf_drv_timer_t m_gen_timer    = NRF_DRV_TIMER_INSTANCE(GENERAL_TIMER_INSTANACE);
 
-static comm_handle_fptr m_gnss_comm_handle;
 static comm_handle_fptr m_barometer_comm_handle;
-static comm_handle_fptr m_uart_data_ready_handle;
-static comm_handle_fptr m_ecompass_comm_handle;
-static comm_handle_fptr m_timer_gnss_handle;
-static comm_handle_fptr m_timer_ubx_handle;
 static comm_handle_fptr m_timer_barometer_read_sensor_handle;
 static comm_handle_fptr m_timer_battery_handler;
-static comm_handle_fptr m_timer_lns_handler;
 static comm_handle_fptr m_timer_ecompass_handler;
 static comm_handle_fptr m_timer_general_handler;
 
@@ -40,12 +26,10 @@ APP_TIMER_DEF(m_loc_and_nav_timer_id);                                          
 
 static void gnss_uart_evt_handler(app_uart_evt_t * p_event);
 static void battery_level_meas_timeout_handler(void * p_context);
-static void loc_and_nav_timeout_handler(void * p_context);
-static void timer_gnss_event_handler(nrf_timer_event_t event_type, void* p_context);
+static void general_timer_event_handler(nrf_timer_event_t event_type, void* p_context);
 static void timer_ubx_event_handler(nrf_timer_event_t event_type, void* p_context);
 
 static void gpio_init(void);
-static void uart_init(void);
 static void twi_init(void);
 static void spi_init(void);
 static void timer_init(void);
@@ -60,35 +44,6 @@ static void gpio_init(void)
     nrf_gpio_cfg_output(OLED_RES_PIN);
     nrf_gpio_cfg_output(OLED_DC_PIN);
 #endif
-}
-
-
-static void uart_init(void)
-{
-    ret_code_t err_code;
-
-    const app_uart_comm_params_t comm_params =
-    {
-        GNSS_UART_RX_PIN,
-        GNSS_UART_TX_PIN,
-        GNSS_UART_RTS_PIN,
-        GNSS_UART_CTS_PIN,
-        APP_UART_FLOW_CONTROL_DISABLED,
-        false,
-#if defined (UART_PRESENT)
-        NRF_UART_BAUDRATE_115200
-#else
-        NRF_UARTE_BAUDRATE_115200
-#endif
-    };
-
-    APP_UART_FIFO_INIT(&comm_params,
-                         GNSS_UART_RX_BUFF_SIZE,
-                         GNSS_UART_TX_BUFF_SIZE,
-                         gnss_uart_evt_handler,
-                         APP_IRQ_PRIORITY_LOWEST,
-                         err_code);
-    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -154,27 +109,16 @@ static void timer_init(void)
                                 battery_level_meas_timeout_handler);
     APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_create(&m_loc_and_nav_timer_id,
-                                APP_TIMER_MODE_REPEATED,
-                                loc_and_nav_timeout_handler);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = nrf_drv_timer_init(&m_gnss_timer, &timer_cfg, timer_gnss_event_handler);
+    err_code = nrf_drv_timer_init(&m_gen_timer, &timer_cfg, general_timer_event_handler);
     APP_ERROR_CHECK(err_code);
 
     err_code = nrf_drv_timer_init(&m_ubx_timer, &timer_cfg, timer_ubx_event_handler);
     APP_ERROR_CHECK(err_code);
 
-    nrf_drv_timer_extended_compare(&m_gnss_timer,
+    nrf_drv_timer_extended_compare(&m_gen_timer,
                                    NRF_TIMER_CC_CHANNEL0,
-                                   nrf_drv_timer_ms_to_ticks(&m_gnss_timer, UART_TIMER_STEP),
+                                   nrf_drv_timer_ms_to_ticks(&m_gen_timer, UART_TIMER_STEP),
                                    NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK,
-                                   true);
-
-    nrf_drv_timer_extended_compare(&m_ubx_timer,
-                                   NRF_TIMER_CC_CHANNEL1,
-                                   nrf_drv_timer_ms_to_ticks(&m_ubx_timer, TWI_TIMER_STEP),
-                                   NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK,
                                    true);
 }
 
@@ -182,9 +126,6 @@ static void timer_init(void)
 void peripherals_init(void)
 {
     gpio_init();
-    nrf_delay_ms(10);
-
-    uart_init();
     nrf_delay_ms(10);
 
     twi_init();
@@ -208,10 +149,7 @@ void peripherals_start_timers(void)
     err_code = app_timer_start(m_battery_timer_id, BATTERY_LEVEL_MEAS_INTERVAL, NULL);
     APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_start(m_loc_and_nav_timer_id, LOC_AND_NAV_DATA_INTERVAL, NULL);
-    APP_ERROR_CHECK(err_code);
-
-    nrf_drv_timer_enable(&m_gnss_timer);
+    nrf_drv_timer_enable(&m_gen_timer);
     nrf_drv_timer_enable(&m_ubx_timer);
 }
 
@@ -227,30 +165,14 @@ ret_code_t peripherals_twi_rx(uint16_t device_address, uint8_t *data, uint16_t d
     return nrf_drv_twi_rx(&m_gbc_twi, device_address, data, data_size);
 }
 
-
-void peripherals_oled_reset(void)
+ret_code_t peripherals_spi_tx(uint8_t *data, uint16_t data_size)
 {
-    /* CS = High (not selected) */
-    nrf_gpio_pin_write(OLED_SS_PIN, GPIO_PIN_SET);
 
-    /* Reset the OLED */
-    nrf_gpio_pin_write(OLED_RES_PIN, GPIO_PIN_RESET);
-    nrf_delay_ms(10);
-    nrf_gpio_pin_write(OLED_RES_PIN, GPIO_PIN_SET);
-    nrf_delay_ms(10);
 }
 
-void peripherals_oled_write_command(uint8_t *data, uint16_t data_size)
+ret_code_t peripherals_spi_rx(uint8_t *data, uint16_t data_size)
 {
-    nrf_gpio_pin_write(OLED_DC_PIN, GPIO_PIN_RESET);
-    APP_ERROR_CHECK(nrf_drv_spi_transfer(&m_oled_spi, data, data_size, NULL, NULL));
-}
 
-
-void peripherals_oled_write_data(uint8_t *data, uint16_t data_size)
-{
-    nrf_gpio_pin_write(OLED_DC_PIN, GPIO_PIN_SET);
-    APP_ERROR_CHECK(nrf_drv_spi_transfer(&m_oled_spi, data, data_size, NULL, NULL));
 }
 
 
@@ -277,58 +199,21 @@ static void battery_level_meas_timeout_handler(void * p_context)
 }
 
 
-/**@brief Location and navigation time-out handler.
- *
- * @details This function will be called each time the location and navigation measurement timer expires.
- *
- * @param[in]   p_context   Pointer used for passing some arbitrary information (context) from the
- *                          app_start_timer() call to the time-out handler.
- */
-static void loc_and_nav_timeout_handler(void * p_context)
+void baro_twi_evt_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
 {
-    UNUSED_PARAMETER(p_context);
-    if (NULL != m_timer_lns_handler)
+    switch (p_event->type)
     {
-        m_timer_lns_handler();
+        case NRF_DRV_TWI_EVT_DONE:
+        {
+            break;
+        }
+
+        default: break;
     }
 }
 
 
-/**
- * @brief Handler for serial events.
- */
-static void gnss_uart_evt_handler(app_uart_evt_t * p_event)
-{
-    switch (p_event->evt_type)
-    {
-	case APP_UART_DATA_READY:
-	{
-            if (NULL != m_uart_data_ready_handle)
-            {
-                m_uart_data_ready_handle();
-            }
-	    break;
-	}
-
-	case APP_UART_COMMUNICATION_ERROR:
-	{
-//            APP_ERROR_HANDLER(p_event->data.error_communication);
-	    break;
-	}
-
-	case APP_UART_FIFO_ERROR:
-	{
-            APP_ERROR_HANDLER(p_event->data.error_code);
-	    break;
-	}
-
-	default: break;
-    }
-}
-
-
-void gnss_i2c_evt_handler(nrf_drv_twi_evt_t const * p_event,
-                                           void * p_context)
+void eep_twi_evt_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
 {
     switch (p_event->type)
     {
@@ -345,17 +230,12 @@ void gnss_i2c_evt_handler(nrf_drv_twi_evt_t const * p_event,
 /**
  * @brief Handler for timer events.
  */
-static void timer_gnss_event_handler(nrf_timer_event_t event_type, void* p_context)
+static void general_timer_event_handler(nrf_timer_event_t event_type, void* p_context)
 {
     switch (event_type)
     {
         case NRF_TIMER_EVENT_COMPARE0:
         {
-            if (NULL != m_timer_gnss_handle)
-            {
-                m_timer_gnss_handle();
-            }
-
             if (NULL != m_timer_general_handler)
             {
                 m_timer_general_handler();
@@ -364,8 +244,10 @@ static void timer_gnss_event_handler(nrf_timer_event_t event_type, void* p_conte
         }
 
         default:
+        {
             //Do nothing.
             break;
+        }
     }
 }
 
@@ -408,27 +290,20 @@ void peripherals_assign_comm_handle(uint8_t comm_handle_type, comm_handle_fptr c
     {
         switch (comm_handle_type)
         {
-            case GNSS_COMM:
-            {
-                m_gnss_comm_handle = comm_handle;
-                break;
-            }
-
             case BAROMETER_COMM:
             {
                 m_barometer_comm_handle = comm_handle;           
                 break;
             }
 
-            case ECOMPASS_COMM:
+            case ENVIRONMENTAL_COMM:
             {
                 m_ecompass_comm_handle = comm_handle; 
                 break;
             }
 
-            case UART_DATA_READY:
+            case EEP_COMM:
             {
-                m_uart_data_ready_handle = comm_handle;
                 break;
             }
 
@@ -462,12 +337,6 @@ void peripherals_assign_comm_handle(uint8_t comm_handle_type, comm_handle_fptr c
                 break;
             }
 
-            case TIMER_LNS:
-            {
-                m_timer_lns_handler = comm_handle;
-                break;
-            }
-
             case TIMER_GENERAL:
             {
                 m_timer_general_handler = comm_handle;
@@ -477,12 +346,6 @@ void peripherals_assign_comm_handle(uint8_t comm_handle_type, comm_handle_fptr c
             default: break;
         }
     }
-}
-
-
-void peripherals_app_uart_get(uint8_t * p_byte)
-{
-    app_uart_get(p_byte);
 }
 
 

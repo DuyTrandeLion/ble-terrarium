@@ -243,7 +243,7 @@
         </file>
         <file file_name="../nRF5_SDK_17.0.0_9d13099/integration/nrfx/legacy/nrf_drv_twi.c" />
         <file file_name="../nRF5_SDK_17.0.0_9d13099/integration/nrfx/legacy/nrf_drv_uart.c">
-          <configuration Name="Debug" build_exclude_from_build="No" />
+          <configuration Name="Debug" build_exclude_from_build="Yes" />
         </file>
       </folder>
       <folder Name="modules/nrfx/drivers">
@@ -266,7 +266,9 @@
           <configuration Name="Debug" build_exclude_from_build="Yes" />
           <configuration Name="Release" build_exclude_from_build="Yes" />
         </file>
-        <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_qspi.c" />
+        <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_qspi.c">
+          <configuration Name="Debug" build_exclude_from_build="Yes" />
+        </file>
         <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_rng.c" />
         <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_rtc.c" />
         <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_saadc.c" />
@@ -288,10 +290,10 @@
           <configuration Name="Release" build_exclude_from_build="Yes" />
         </file>
         <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_uart.c">
-          <configuration Name="Debug" build_exclude_from_build="No" />
+          <configuration Name="Debug" build_exclude_from_build="Yes" />
         </file>
         <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_uarte.c">
-          <configuration Name="Debug" build_exclude_from_build="No" />
+          <configuration Name="Debug" build_exclude_from_build="Yes" />
         </file>
         <file file_name="../nRF5_SDK_17.0.0_9d13099/modules/nrfx/drivers/src/nrfx_wdt.c" />
         <folder Name="prs">
@@ -659,7 +661,7 @@
       </folder>
       <folder Name="ble_cts_c">
         <file file_name="../nRF5_SDK_17.0.0_9d13099/components/ble/ble_services/ble_cts_c/ble_cts_c.c" />
-        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Debug" build_exclude_from_build="No" />
         <configuration Name="Release" build_exclude_from_build="Yes" />
       </folder>
       <folder Name="ble_dfu">
@@ -1069,6 +1071,7 @@
         </file>
         <file file_name="../nRF5_SDK_17.0.0_9d13099/components/libraries/uart/app_uart_fifo.c" />
         <file file_name="../nRF5_SDK_17.0.0_9d13099/components/libraries/uart/retarget.c" />
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
       </folder>
       <folder Name="usbd">
         <folder Name="class/audio">
@@ -1305,7 +1308,11 @@
           <file file_name="Core/Drivers/ICP101xx/ICP101xx.c" />
           <file file_name="Core/Drivers/ICP101xx/ICP101xx.h" />
         </folder>
-        <folder Name="BME680_driver" />
+        <folder Name="BME680_driver">
+          <file file_name="Core/Drivers/BME680_driver/bme680.c" />
+          <file file_name="Core/Drivers/BME680_driver/bme680.h" />
+          <file file_name="Core/Drivers/BME680_driver/bme680_defs.h" />
+        </folder>
       </folder>
       <folder Name="Middleware">
         <folder Name="Miscellaneous">
@@ -1317,7 +1324,10 @@
           <file file_name="Core/Middleware/barometer/barometer.c" />
           <file file_name="Core/Middleware/barometer/barometer.h" />
         </folder>
-        <folder Name="environmental" />
+        <folder Name="environmental">
+          <file file_name="Core/Middleware/environmental/environmental.c" />
+          <file file_name="Core/Middleware/environmental/environmental.h" />
+        </folder>
       </folder>
     </folder>
     <configuration

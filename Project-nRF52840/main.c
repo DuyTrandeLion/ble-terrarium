@@ -63,8 +63,6 @@
 #include "ble_advertising.h"
 #include "ble_dis.h"
 #include "ble_bas.h"
-#include "ble_lns.h"
-#include "ble_ans_c.h"
 #include "ble_conn_params.h"
 #include "ble_db_discovery.h"
 #include "sensorsim.h"
@@ -135,13 +133,7 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
-#define TRAVEL_READY                    0
-#define TRAVEL_STARTED                  1
-#define TRAVEL_PAUSED                   2
-
-BLE_ANS_C_DEF(m_ans_c);                                                             /**< Structure used to identify the Alert Notification Service Client. */
 BLE_BAS_DEF(m_bas);                                                                 /**< Structure used to identify the battery service. */
-BLE_LNS_DEF(m_lns);                                                                 /**< Location and navigation service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                             /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                                 /**< Advertising module instance. */
@@ -157,112 +149,11 @@ static uint8_t      m_alert_message_buffer[MESSAGE_BUFFER_SIZE];                
 static uint16_t     m_conn_handle        = BLE_CONN_HANDLE_INVALID;                 /**< Handle of the current connection. */
 static ble_uuid_t   m_adv_uuids[] =                                                 /**< Universally unique service identifiers. */
 {
-    {BLE_UUID_LOCATION_AND_NAVIGATION_SERVICE, BLE_UUID_TYPE_BLE},
     {BLE_UUID_BATTERY_SERVICE, BLE_UUID_TYPE_BLE},
     {BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}
 };
 static sensorsim_cfg_t   m_battery_sim_cfg;                                         /**< Battery Level sensor simulator configuration. */
 static sensorsim_state_t m_battery_sim_state;                                       /**< Battery Level sensor simulator state. */
-
-static ble_lns_loc_speed_t   m_location_speed;                                      /**< Location and speed. */
-static ble_lns_pos_quality_t m_position_quality;                                    /**< Position measurement quality. */
-static ble_lns_navigation_t  m_navigation;                                          /**< Navigation data structure. */
-
-static uint8_t m_accel_calib_status;
-static uint8_t m_gyro_calib_status;
-static uint8_t m_mag_calib_status;
-static uint8_t m_system_calib_status;
-static uint8_t m_display_screen_select;
-static uint8_t m_travelling_status;
-static volatile uint16_t m_screen_timeout = 0xFFFF;
-
-static float m_ecompass_heading;
-
-/**@brief String literals for the iOS notification categories. used then printing to UART. */
-static char const *lit_catid[BLE_ANS_NB_OF_CATEGORY_ID] =
-{
-    "Simple alert",
-    "Email",
-    "News",
-    "Incoming call",
-    "Missed call",
-    "SMS/MMS",
-    "Voice mail",
-    "Schedule",
-    "High prioritized alert",
-    "Instant message"
-};
-
-static const ble_lns_loc_speed_t initial_lns_location_speed =
-{
-    .instant_speed_present   = false,
-    .total_distance_present  = true,
-    .location_present        = true,
-    .elevation_present       = true,
-    .heading_present         = true,
-    .rolling_time_present    = true,
-    .utc_time_time_present   = true,
-    .position_status         = BLE_LNS_NO_POSITION,
-    .data_format             = BLE_LNS_SPEED_DISTANCE_FORMAT_2D,
-    .elevation_source        = BLE_LNS_ELEV_SOURCE_BAROMETRIC,
-    .heading_source          = BLE_LNS_HEADING_SOURCE_COMPASS,
-    .instant_speed           = 12,         // = 1.2 meter/second
-    .total_distance          = 0,          // = 2356 meters
-    .latitude                = -103123567, // = -10.3123567 degrees
-    .longitude               = 601234567,  // = 60.1234567 degrees
-    .elevation               = 1200,       // = 12.00 meter
-    .heading                 = 2123,       // = 21.23 degrees
-    .rolling_time            = 0,          // = 1 second
-    .utc_time                =
-                               {
-                                   .year    = 2020,
-                                   .month   = 1,
-                                   .day     = 1,
-                                   .hours   = 0,
-                                   .minutes = 0,
-                                   .seconds = 0
-                                }
-};
-
-static const ble_lns_pos_quality_t initial_lns_pos_quality =
-{
-    .number_of_satellites_in_solution_present = true,
-    .number_of_satellites_in_view_present     = true,
-    .time_to_first_fix_present                = true,
-    .ehpe_present                             = false,
-    .evpe_present                             = false,
-    .hdop_present                             = true,
-    .vdop_present                             = true,
-    .position_status                          = BLE_LNS_NO_POSITION,
-    .number_of_satellites_in_solution         = 5,
-    .number_of_satellites_in_view             = 6,
-    .time_to_first_fix                        = 63,  // = 6.3 seconds
-    .hdop                                     = 123,
-    .vdop                                     = 143
-};
-
-static const ble_lns_navigation_t initial_lns_navigation =
-{
-    .remaining_dist_present       = false,
-    .remaining_vert_dist_present  = false,
-    .eta_present                  = false,
-    .position_status              = BLE_LNS_NO_POSITION,
-    .heading_source               = BLE_LNS_HEADING_SOURCE_COMPASS,
-    .navigation_indicator_type    = BLE_LNS_NAV_TO_WAYPOINT,
-    .waypoint_reached             = false,
-    .destination_reached          = false,
-    .bearing                      = 1234,   // = 12.34 degrees
-    .heading                      = 2123,   // = 21.23 degrees
-    .eta                          =
-                                    {
-                                       .year    = 2020,
-                                       .month   = 1,
-                                       .day     = 1,
-                                       .hours   = 0,
-                                       .minutes = 0,
-                                       .seconds = 0
-                                    }
-};
 
 
 static void advertising_start(bool erase_bonds);
@@ -345,238 +236,6 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 }
 
 
-/**@brief Callback function for errors in the Location Navigation Service.
- *
- * @details This function will be called in case of an error in the Location Navigation Service.
- *
- * @warning This handler is an example only and does not fit a final product. You need to analyze
- *          how your product is supposed to react in case of Assert.
- */
-void lns_error_handler(uint32_t err_code)
-{
-    app_error_handler(DEAD_BEEF, 0, 0);
-}
-
-
-/**@brief Location Navigation event handler.
- *
- * @details This function will be called for all events of the Location Navigation Module that
- *          are passed to the application.
- *
- * @param[in]   p_evt   Event received from the Location Navigation Module.
- */
-static void on_lns_evt(ble_lns_t const * p_lns, ble_lns_evt_t const * p_evt)
-{
-    switch (p_evt->evt_type)
-    {
-        case BLE_LNS_CTRLPT_EVT_INDICATION_ENABLED:
-            NRF_LOG_INFO("Control Point: Indication enabled");
-            break;
-
-        case BLE_LNS_CTRLPT_EVT_INDICATION_DISABLED:
-            NRF_LOG_INFO("Control Point: Indication disabled");
-            break;
-
-        case BLE_LNS_LOC_SPEED_EVT_NOTIFICATION_ENABLED:
-            NRF_LOG_INFO("Location/Speed: Notification enabled");
-            break;
-
-        case BLE_LNS_LOC_SPEED_EVT_NOTIFICATION_DISABLED:
-            NRF_LOG_INFO("Location/Speed: Notification disabled");
-            break;
-
-        case BLE_LNS_NAVIGATION_EVT_NOTIFICATION_ENABLED:
-            NRF_LOG_INFO("Navigation: Notification enabled");
-            break;
-
-        case BLE_LNS_NAVIGATION_EVT_NOTIFICATION_DISABLED:
-            NRF_LOG_INFO("Navigation: Notification disabled");
-            break;
-
-        default:
-            break;
-    }
-}
-
-
-ble_lncp_rsp_code_t on_ln_ctrlpt_evt(ble_lncp_t const * p_lncp, ble_lncp_evt_t const * p_evt)
-{
-    switch (p_evt->evt_type)
-    {
-        case LNCP_EVT_MASK_SET:
-            NRF_LOG_INFO("LOC_SPEED_EVT: Feature mask set");
-            break;
-
-        case LNCP_EVT_TOTAL_DISTANCE_SET:
-            NRF_LOG_INFO("LOC_SPEED_EVT: Set total distance: %d", p_evt->params.total_distance);
-            m_location_speed.total_distance = p_evt->params.total_distance;
-            break;
-
-        case LNCP_EVT_ELEVATION_SET:
-            NRF_LOG_INFO("LOC_SPEED_EVT: Set elevation: %d", p_evt->params.elevation);
-            break;
-
-        case LNCP_EVT_FIX_RATE_SET:
-            NRF_LOG_INFO("POS_QUAL_EVT: Fix rate set to %d", p_evt->params.fix_rate);
-            break;
-
-        case LNCP_EVT_NAV_COMMAND:
-            NRF_LOG_INFO("NAV_EVT: Navigation state changed to %d", p_evt->params.nav_cmd);
-            break;
-
-        case LNCP_EVT_ROUTE_SELECTED:
-            NRF_LOG_INFO("NAV_EVT: Route selected %d", p_evt->params.selected_route);
-            break;
-
-
-        default:
-            break;
-    }
-
-    return (LNCP_RSP_SUCCESS);
-}
-
-
-/**@brief Function for setup of alert notifications in central.
- *
- * @details This function will be called when a successful connection has been established.
- */
-static void alert_notification_setup(void)
-{
-    ret_code_t err_code;
-
-    err_code = ble_ans_c_enable_notif_new_alert(&m_ans_c);
-    APP_ERROR_CHECK(err_code);
-    NRF_LOG_INFO("New Alert State: Enabled.");
-
-    err_code = ble_ans_c_enable_notif_unread_alert(&m_ans_c);
-    APP_ERROR_CHECK(err_code);
-    NRF_LOG_INFO("Unread Alert State: Enabled.");
-
-    err_code = ble_ans_c_unread_alert_notify(&m_ans_c, ANS_TYPE_ALL_ALERTS);
-    if (err_code != NRF_SUCCESS && err_code != NRF_ERROR_INVALID_STATE)
-    {
-        APP_ERROR_HANDLER(err_code);
-    }
-    NRF_LOG_INFO("Notify the Unread Alert characteristic for all categories.");
-
-//    err_code = ble_ans_c_new_alert_notify(&m_ans_c, ANS_TYPE_ALL_ALERTS);
-//    if (err_code != NRF_SUCCESS && err_code != NRF_ERROR_INVALID_STATE)
-//    {
-//        APP_ERROR_HANDLER(err_code);
-//    }
-//    NRF_LOG_INFO("Notify the New Alert characteristic for all categories.");
-
-    NRF_LOG_DEBUG("Notifications enabled.");
-}
-
-
-/**@brief Function for setup of alert notifications in central.
- *
- * @details This function will be called when supported alert notification and
- *          supported unread alert notifications has been fetched.
- *
- * @param[in] p_evt  Event containing the response with supported alert types.
- */
-static void control_point_setup(ble_ans_c_evt_t * p_evt)
-{
-    uint32_t                err_code;
-    ble_ans_control_point_t setting;
-
-    if (p_evt->uuid.uuid == BLE_UUID_SUPPORTED_UNREAD_ALERT_CATEGORY_CHAR)
-    {
-        setting.command  = ANS_ENABLE_UNREAD_CATEGORY_STATUS_NOTIFICATION;
-        setting.category = (ble_ans_category_id_t)p_evt->data.alert.alert_category;
-        NRF_LOG_DEBUG("Unread status notification enabled for received categories.");
-    }
-    else if (p_evt->uuid.uuid == BLE_UUID_SUPPORTED_NEW_ALERT_CATEGORY_CHAR)
-    {
-        setting.command  = ANS_ENABLE_NEW_INCOMING_ALERT_NOTIFICATION;
-        setting.category = (ble_ans_category_id_t)p_evt->data.alert.alert_category;
-        NRF_LOG_DEBUG("New incoming notification enabled for received categories.");
-    }
-    else
-    {
-        return;
-    }
-
-    err_code = ble_ans_c_control_point_write(&m_ans_c, &setting);
-    APP_ERROR_CHECK(err_code);
-}
-
-
-/**@brief Function for reading supported alert notifications in central.
- *
- * @details This function will be called when a connection has been established.
- */
-static void supported_alert_notification_read(void)
-{
-    NRF_LOG_DEBUG("Read supported Alert Notification characteristics on the connected peer.");
-
-    ret_code_t err_code;
-
-    err_code = ble_ans_c_new_alert_read(&m_ans_c);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = ble_ans_c_unread_alert_read(&m_ans_c);
-    APP_ERROR_CHECK(err_code);
-
-}
-
-
-/**@brief Function for lighting up the LED corresponding to the notification received.
- *
- * @param[in]   p_evt   Event containing the notification.
- */
-static void handle_alert_notification(ble_ans_c_evt_t * p_evt)
-{
-    ret_code_t err_code;
-
-    switch (p_evt->uuid.uuid)
-    {
-        case BLE_UUID_UNREAD_ALERT_CHAR:
-        {
-            err_code = bsp_indication_set(BSP_INDICATE_ALERT_1);
-            NRF_LOG_INFO("New Unread Alert:");
-            NRF_LOG_INFO("  Category:                 %s",
-                         (uint32_t)lit_catid[p_evt->data.alert.alert_category]);
-            NRF_LOG_INFO("  Number of unread alerts:  %d",
-                         p_evt->data.alert.alert_category_count);
-
-            oled_set_unread_noti(lit_catid[p_evt->data.alert.alert_category],
-                                 p_evt->data.alert.alert_category_count);
-            break;
-        }
-
-        case BLE_UUID_NEW_ALERT_CHAR:
-        {
-            err_code = bsp_indication_set(BSP_INDICATE_ALERT_0);
-            NRF_LOG_INFO("New Alert:");
-            NRF_LOG_INFO("  Category:                 %s",
-                         (uint32_t)lit_catid[p_evt->data.alert.alert_category]);
-            NRF_LOG_INFO("  Number of new alerts:     %d",
-                         p_evt->data.alert.alert_category_count);
-            NRF_LOG_INFO("  Text String Information:  %s",
-                         (uint32_t)p_evt->data.alert.p_alert_msg_buf);
-
-            oled_set_new_noti(lit_catid[p_evt->data.alert.alert_category],
-                              p_evt->data.alert.p_alert_msg_buf,
-                              p_evt->data.alert.alert_category_count);
-            break;
-        }
-
-        default:
-        {
-            // Only Unread and New Alerts exists, thus do nothing.
-            break;
-        }
-    }
-
-    m_display_screen_select = NOTI_0;
-    m_screen_timeout = 0;
-}
-
-
 /**@brief Function for performing battery measurement and updating the Battery Level characteristic
  *        in Battery Service.
  */
@@ -600,167 +259,9 @@ static void battery_level_update(void)
 }
 
 
-static void update_time(ble_date_time_t * p_time)
-{
-    if (NULL != p_time)
-    {
-        UBXGNSS_GET_DATE(GNSS_DEV, p_time->year, p_time->month, p_time->day);
-        UBXGNSS_GET_TIME(GNSS_DEV, p_time->hours, p_time->minutes, p_time->seconds);
-    }
-}
-
-
-static void navigation_update(void)
-{
-    m_navigation.position_status = (0 != UBXGNSS_GET_FIX(GNSS_DEV))? BLE_LNS_POSITION_OK : BLE_LNS_NO_POSITION;
-    m_navigation.waypoint_reached    = !m_navigation.waypoint_reached;
-    m_navigation.destination_reached = !m_navigation.destination_reached;
-    m_navigation.bearing++;
-  
-    m_navigation.heading = m_ecompass_heading * 100;
-
-    update_time(&m_navigation.eta);
-}
-
-
-static void position_quality_update(void)
-{
-    m_position_quality.position_status = (0 != UBXGNSS_GET_FIX(GNSS_DEV))? BLE_LNS_POSITION_OK : BLE_LNS_NO_POSITION;
-    m_position_quality.number_of_satellites_in_solution = UBXGNSS_GET_SATS_IN_USE(GNSS_DEV);
-    m_position_quality.number_of_satellites_in_view = UBXGNSS_GET_SATS_IN_VIEW(GNSS_DEV);
-    m_position_quality.time_to_first_fix = (UBXGNSS_GET_TIME_TO_FIRST_FIX(GNSS_DEV) / 1000) * 10;
-    m_position_quality.hdop = (UBXGNSS_GET_H_DILUTION(GNSS_DEV) * 10);
-    m_position_quality.vdop = (UBXGNSS_GET_V_DILUTION(GNSS_DEV) * 10);
-}
-
-
-/**@brief Provide simulated location and speed.
- */
-static void loc_speed_update(void)
-{
-    float elevation;
-
-    m_location_speed.position_status = (0 != UBXGNSS_GET_FIX(GNSS_DEV))? BLE_LNS_POSITION_OK : BLE_LNS_NO_POSITION;
-    m_location_speed.data_format = ((2 == UBXGNSS_GET_FIX_MODE(GNSS_DEV))? BLE_LNS_SPEED_DISTANCE_FORMAT_2D :
-                                    (3 == UBXGNSS_GET_FIX_MODE(GNSS_DEV))? BLE_LNS_SPEED_DISTANCE_FORMAT_3D : BLE_LNS_SPEED_DISTANCE_FORMAT_2D);
-    m_location_speed.latitude = (UBXGNSS_GET_LATITUDE(GNSS_DEV) * 10000000);
-    m_location_speed.longitude = (UBXGNSS_GET_LONGITUDE(GNSS_DEV) * 10000000);
-
-    if (BLE_LNS_ELEV_SOURCE_POSITIONING_SYSTEM == m_location_speed.elevation_source)
-    {
-        m_location_speed.elevation = (UBXGNSS_GET_ALTITUDE(GNSS_DEV) * 100);
-    }
-    else if (BLE_LNS_ELEV_SOURCE_BAROMETRIC == m_location_speed.elevation_source)
-    {
-        barometer_get_altitude(&elevation);
-        m_location_speed.elevation = (uint32_t)(elevation * 100);
-    }
-//    m_location_speed.instant_speed = (UBXGNSS_GET_INSTANT_SPEED(GNSS_DEV, lwgps_speed_mph) * 10);
-
-    /* Read from sensors */
-    ecompass_read_heading(&m_ecompass_heading);
-
-    m_location_speed.heading = m_ecompass_heading * 100;
-
-    if (TRAVEL_STARTED == m_travelling_status)
-    {
-        m_location_speed.rolling_time++;
-    }
-
-    update_time(&m_location_speed.utc_time);
-}
-
-
 static void general_timer_handler(void)
 {
-    if (0xFFFF != m_screen_timeout)
-    {
-        m_screen_timeout++;
-    }
 
-    if ((m_screen_timeout >= SCREEN_TIMEOUT_PERIOD) && (0xFFFF != m_screen_timeout))
-    {
-        m_screen_timeout = 0xFFFF;
-        m_display_screen_select = NAVIGATION_0;
-    }
-}
-
-
-/**@brief Location and navigation time-out handler.
- *
- * @details This function will be called each time the location and navigation measurement timer expires.
- *
- * @param[in]   p_context   Pointer used for passing some arbitrary information (context) from the
- *                          app_start_timer() call to the time-out handler.
- */
-static void lns_timeout_handler(void)
-{
-    ret_code_t err_code;
-
-    loc_speed_update();
-    position_quality_update();
-    navigation_update();
-
-    err_code = ble_lns_loc_speed_send(&m_lns);
-    if (err_code != NRF_ERROR_INVALID_STATE)
-    {
-        APP_ERROR_CHECK(err_code);
-    }
-
-    err_code = ble_lns_navigation_send(&m_lns);
-    if (err_code != NRF_ERROR_INVALID_STATE)
-    {
-        APP_ERROR_CHECK(err_code);
-    }
-    
-    ecompass_read_calibration_status(&m_accel_calib_status, &m_gyro_calib_status, &m_mag_calib_status, m_system_calib_status);
-    oled_set_calib_status(m_accel_calib_status, m_gyro_calib_status, m_mag_calib_status, m_system_calib_status);
-    oled_navigation_screen(&m_lns, m_display_screen_select);
-}
-
-
-/**@brief Function for handling the Alert Notification Service Client.
- *
- * @details This function will be called for all events in the Alert Notification Client which
- *          are passed to the application.
- *
- * @param[in]   p_evt   Event received from the Alert Notification Service Client.
- */
-static void on_ans_c_evt(ble_ans_c_evt_t * p_evt)
-{
-    ret_code_t err_code;
-
-    switch (p_evt->evt_type)
-    {
-        case BLE_ANS_C_EVT_NOTIFICATION:
-            handle_alert_notification(p_evt);
-            NRF_LOG_DEBUG("Alert Notification received from server, UUID: %X.", p_evt->uuid.uuid);
-            break; // BLE_ANS_C_EVT_NOTIFICATION
-
-        case BLE_ANS_C_EVT_DISCOVERY_COMPLETE:
-            NRF_LOG_DEBUG("Alert Notification Service discovered on the server.");
-            err_code = ble_ans_c_handles_assign(&m_ans_c,
-                                                p_evt->conn_handle,
-                                                &p_evt->data.service);
-            APP_ERROR_CHECK(err_code);
-            supported_alert_notification_read();
-            alert_notification_setup();
-            break; // BLE_ANS_C_EVT_DISCOVERY_COMPLETE
-
-        case BLE_ANS_C_EVT_READ_RESP:
-            NRF_LOG_DEBUG("Alert Setup received from server, UUID: %X.", p_evt->uuid.uuid);
-            control_point_setup(p_evt);
-            break; // BLE_ANS_C_EVT_READ_RESP
-
-        case BLE_ANS_C_EVT_DISCONN_COMPLETE:
-            err_code = bsp_indication_set(BSP_INDICATE_ALERT_OFF);
-            APP_ERROR_CHECK(err_code);
-            break; // BLE_ANS_C_EVT_DISCONN_COMPLETE
-
-        default:
-            // No implementation needed.
-            break;
-    }
 }
 
 
@@ -836,75 +337,14 @@ static void alert_notification_error_handler(uint32_t nrf_error)
 static void services_init(void)
 {
     ret_code_t         err_code;
-    ble_lns_init_t     lns_init;
     ble_dis_init_t     dis_init;
     ble_bas_init_t     bas_init;
-    ble_ans_c_init_t   ans_init;
     nrf_ble_qwr_init_t qwr_init = {0};
 
     // Initialize Queued Write Module.
     qwr_init.error_handler = nrf_qwr_error_handler;
 
     err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
-    APP_ERROR_CHECK(err_code);
-
-    // Initialize Location and Navigation Service.
-    memset(&lns_init, 0, sizeof(lns_init));
-
-    lns_init.evt_handler      = on_lns_evt;
-    lns_init.lncp_evt_handler = on_ln_ctrlpt_evt;
-    lns_init.error_handler    = lns_error_handler;
-    lns_init.p_gatt_queue     = &m_ble_gatt_queue;
-
-    lns_init.is_position_quality_present = true;
-    lns_init.is_control_point_present    = true;
-    lns_init.is_navigation_present       = true;
-
-    lns_init.available_features     = BLE_LNS_FEATURE_INSTANT_SPEED_SUPPORTED                 |
-                                      BLE_LNS_FEATURE_TOTAL_DISTANCE_SUPPORTED                |
-                                      BLE_LNS_FEATURE_LOCATION_SUPPORTED                      |
-                                      BLE_LNS_FEATURE_ELEVATION_SUPPORTED                     |
-                                      BLE_LNS_FEATURE_HEADING_SUPPORTED                       |
-                                      BLE_LNS_FEATURE_ROLLING_TIME_SUPPORTED                  |
-                                      BLE_LNS_FEATURE_UTC_TIME_SUPPORTED                      |
-                                      BLE_LNS_FEATURE_REMAINING_DISTANCE_SUPPORTED            |
-                                      BLE_LNS_FEATURE_REMAINING_VERT_DISTANCE_SUPPORTED       |
-                                      BLE_LNS_FEATURE_EST_TIME_OF_ARRIVAL_SUPPORTED           |
-                                      BLE_LNS_FEATURE_NUM_SATS_IN_SOLUTION_SUPPORTED          |
-                                      BLE_LNS_FEATURE_NUM_SATS_IN_VIEW_SUPPORTED              |
-                                      BLE_LNS_FEATURE_TIME_TO_FIRST_FIX_SUPPORTED             |
-                                      BLE_LNS_FEATURE_HORZ_DILUTION_OF_PRECISION_SUPPORTED    |
-                                      BLE_LNS_FEATURE_VERT_DILUTION_OF_PRECISION_SUPPORTED    |
-                                      BLE_LNS_FEATURE_LOC_AND_SPEED_CONTENT_MASKING_SUPPORTED |
-                                      BLE_LNS_FEATURE_FIX_RATE_SETTING_SUPPORTED              |
-                                      BLE_LNS_FEATURE_ELEVATION_SETTING_SUPPORTED             |
-                                      BLE_LNS_FEATURE_POSITION_STATUS_SUPPORTED;
-
-
-    m_location_speed   = initial_lns_location_speed;
-    m_position_quality = initial_lns_pos_quality;
-    m_navigation       = initial_lns_navigation;
-
-    lns_init.p_location_speed   = &m_location_speed;
-    lns_init.p_position_quality = &m_position_quality;
-    lns_init.p_navigation       = &m_navigation;
-
-    lns_init.loc_nav_feature_security_req_read_perm  = SEC_OPEN;
-    lns_init.loc_speed_security_req_cccd_write_perm  = SEC_OPEN;
-    lns_init.position_quality_security_req_read_perm = SEC_OPEN;
-    lns_init.navigation_security_req_cccd_write_perm = SEC_OPEN;
-    lns_init.ctrl_point_security_req_write_perm      = SEC_OPEN;
-    lns_init.ctrl_point_security_req_cccd_write_perm = SEC_OPEN;
-
-    err_code = ble_lns_init(&m_lns, &lns_init);
-    APP_ERROR_CHECK(err_code);
-
-    ble_lns_route_t route1 = {.route_name = "Route one"};
-    err_code = ble_lns_add_route(&m_lns, &route1);
-    APP_ERROR_CHECK(err_code);
-
-    ble_lns_route_t route2 = {.route_name = "Route two"};
-    err_code = ble_lns_add_route(&m_lns, &route2);
     APP_ERROR_CHECK(err_code);
 
     // Initialize Battery Service.
@@ -939,19 +379,6 @@ static void services_init(void)
 
     err_code = ble_dis_init(&dis_init);
     APP_ERROR_CHECK(err_code);
-
-    // Initialize the Alert Notification Service Client.
-    memset(&ans_init, 0, sizeof(ans_init));
-    memset(m_alert_message_buffer, 0, MESSAGE_BUFFER_SIZE);
-
-    ans_init.evt_handler         = on_ans_c_evt;
-    ans_init.message_buffer_size = MESSAGE_BUFFER_SIZE;
-    ans_init.p_message_buffer    = m_alert_message_buffer;
-    ans_init.error_handler       = alert_notification_error_handler;
-    ans_init.p_gatt_queue        = &m_ble_gatt_queue;
-
-    err_code =  ble_ans_c_init(&m_ans_c, &ans_init);
-    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -965,38 +392,6 @@ static void sensor_simulator_init(void)
     m_battery_sim_cfg.start_at_max = true;
 
     sensorsim_init(&m_battery_sim_state, &m_battery_sim_cfg);
-}
-
-
-/**@brief Function for handling database discovery events.
- *
- * @details This function is callback function to handle events from the database discovery module.
- *          Depending on the UUIDs that are discovered, this function should forward the events
- *          to their respective services.
- *
- * @param[in] p_event  Pointer to the database discovery event.
- */
-static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
-{
-    ble_ans_c_on_db_disc_evt(&m_ans_c, p_evt);
-}
-
-
-/** @brief Database discovery module initialization.
- */
-static void db_discovery_init(void)
-{
-    ret_code_t err_code;
-    ble_db_discovery_init_t db_init;
-
-    memset(&db_init, 0, sizeof(ble_db_discovery_init_t));
-
-    db_init.evt_handler  = db_disc_handler;
-    db_init.p_gatt_queue = &m_ble_gatt_queue;
-
-    err_code = ble_db_discovery_init(&db_init);
-
-    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -1314,27 +709,16 @@ static void bsp_event_handler(bsp_event_t event)
 
         case BSP_EVENT_KEY_1:
         {
-            m_display_screen_select = NOTI_0;
             break;
         }
 
         case BSP_EVENT_KEY_2:
         {
-            if (TRAVEL_STARTED == m_travelling_status)
-            {
-                m_location_speed.rolling_time = 0;
-                m_travelling_status = TRAVEL_READY;
-            }
-            else
-            {
-                m_travelling_status = TRAVEL_STARTED;
-            }
             break;
         }
 
         case BSP_EVENT_KEY_3:
         {
-            m_display_screen_select = (m_display_screen_select + 1) % ALL_SCREEN;
             break;
         }
 
@@ -1514,19 +898,14 @@ int main(void)
     gap_params_init();
     gatt_init();
     advertising_init();
-    db_discovery_init();
     services_init();
     sensor_simulator_init();
     conn_params_init();
     peer_manager_init();
 
-    gnss_init();
     barometer_init();
-    ecompass_init();
-    oled_init();
 
     peripherals_assign_comm_handle(TIMER_BATTERY, battery_level_update);
-    peripherals_assign_comm_handle(TIMER_LNS, lns_timeout_handler);
     peripherals_assign_comm_handle(TIMER_GENERAL, general_timer_handler);
 
     // Start execution.
