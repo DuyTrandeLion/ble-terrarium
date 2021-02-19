@@ -71,10 +71,11 @@ static void spi_init(void)
     ret_code_t err_code;
 
     nrf_drv_spi_config_t env_spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
-    env_spi_config.ss_pin   = ENV_CS_PIN;
-    env_spi_config.mosi_pin = ENV_MOSI_PIN;
-    env_spi_config.miso_pin = ENV_MISO_PIN;
-    env_spi_config.sck_pin  = ENV_SCK_PIN;
+    env_spi_config.frequency  = NRF_DRV_SPI_FREQ_8M;
+    env_spi_config.ss_pin     = ENV_CS_PIN;
+    env_spi_config.mosi_pin   = ENV_MOSI_PIN;
+    env_spi_config.miso_pin   = ENV_MISO_PIN;
+    env_spi_config.sck_pin    = ENV_SCK_PIN;
 
 #if SPI_USE_INTERRUPT
     err_code = nrf_drv_spi_init(&m_env_spi, &env_spi_config, env_spi_event_handler, NULL);
