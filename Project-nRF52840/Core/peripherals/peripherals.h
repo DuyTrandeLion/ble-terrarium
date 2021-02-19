@@ -26,6 +26,7 @@ extern "C" {
 #define ENV_SPI_INSTANCE                2
 
 #define GENERAL_TIMER_INSTANACE         1
+#define SENSOR_TIMER_INSTANCE           2
 
 #define BARO_I2C_SDA_PIN                ARDUINO_A4_PIN
 #define BARO_I2C_SCL_PIN                ARDUINO_A5_PIN
@@ -74,11 +75,14 @@ void peripherals_start_timers(void);
 
 void peripherals_assign_comm_handle(uint8_t comm_handle_type, comm_handle_fptr comm_handle);
 
-ret_code_t peripherals_twi_tx(uint16_t device_address, uint8_t *data, uint16_t data_size, bool no_stop);
-ret_code_t peripherals_twi_rx(uint16_t device_address, uint8_t *data, uint16_t data_size);
+ret_code_t baro_peripherals_twi_tx(uint16_t device_address, uint8_t *data, uint16_t data_size, bool no_stop);
+ret_code_t baro_peripherals_twi_rx(uint16_t device_address, uint8_t *data, uint16_t data_size);
 
-ret_code_t peripherals_spi_tx(uint8_t *data, uint16_t data_size);
-ret_code_t peripherals_spi_rx(uint8_t *data, uint16_t data_size);
+ret_code_t eep_peripherals_twi_tx(uint16_t device_address, uint8_t *data, uint16_t data_size, bool no_stop);
+ret_code_t env_peripherals_twi_rx(uint16_t device_address, uint8_t *data, uint16_t data_size);
+
+ret_code_t env_peripherals_spi_tx(uint8_t *data, uint16_t data_size);
+ret_code_t env_peripherals_spi_rx(uint8_t *data, uint16_t data_size);
 
 void peripherals_delay_ms(uint32_t delay_time_ms);
 

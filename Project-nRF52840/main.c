@@ -64,7 +64,6 @@
 #include "ble_dis.h"
 #include "ble_bas.h"
 #include "ble_conn_params.h"
-#include "ble_db_discovery.h"
 #include "sensorsim.h"
 #include "nrf_sdh.h"
 #include "nrf_sdh_soc.h"
@@ -137,12 +136,7 @@ BLE_BAS_DEF(m_bas);                                                             
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                             /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                                 /**< Advertising module instance. */
-BLE_DB_DISCOVERY_DEF(m_ble_db_discovery);                                           /**< DB discovery module instance. */
 
-
-NRF_BLE_GQ_DEF(m_ble_gatt_queue,                                                    /**< BLE GATT Queue instance. */
-               NRF_SDH_BLE_PERIPHERAL_LINK_COUNT,
-               NRF_BLE_GQ_QUEUE_SIZE);
 
 static pm_peer_id_t m_peer_to_be_deleted = PM_PEER_ID_INVALID;
 static uint8_t      m_alert_message_buffer[MESSAGE_BUFFER_SIZE];                    /**< Message buffer for optional notify messages. */
@@ -283,7 +277,7 @@ static void gap_params_init(void)
                                           strlen(DEVICE_NAME));
     APP_ERROR_CHECK(err_code);
 
-    err_code = sd_ble_gap_appearance_set(BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_DISP);
+    err_code = sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_TAG);
     APP_ERROR_CHECK(err_code);
 
     memset(&gap_conn_params, 0, sizeof(gap_conn_params));
@@ -549,8 +543,6 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
-            err_code = ble_db_discovery_start(&m_ble_db_discovery, m_conn_handle);
-            APP_ERROR_CHECK(err_code);
             err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
             APP_ERROR_CHECK(err_code);
             // Start Security Request timer.

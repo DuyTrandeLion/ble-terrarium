@@ -286,7 +286,7 @@
 
 // <s> DEVICE_NAME - Name of the device. Will be included in the advertising data.
 #ifndef DEVICE_NAME
-#define DEVICE_NAME "Nordic_CatTrack"
+#define DEVICE_NAME "Nordic_Terrarium"
 #endif
 
 // <o> DEVICE_NAME_MAX_SIZE - Max device name length.
@@ -430,7 +430,7 @@
 
 
 #ifndef BLE_DB_DISCOVERY_ENABLED
-#define BLE_DB_DISCOVERY_ENABLED 1
+#define BLE_DB_DISCOVERY_ENABLED 0
 #endif
 
 // <q> BLE_DTM_ENABLED  - ble_dtm - Module for testing RF/PHY using DTM commands
@@ -478,7 +478,7 @@
 // <e> NRF_BLE_GQ_ENABLED - nrf_ble_gq - BLE GATT Queue Module
 //==========================================================
 #ifndef NRF_BLE_GQ_ENABLED
-#define NRF_BLE_GQ_ENABLED 1
+#define NRF_BLE_GQ_ENABLED 0
 #endif
 // <o> NRF_BLE_GQ_DATAPOOL_ELEMENT_SIZE - Default size of a single element in the pool of memory objects.
 #ifndef NRF_BLE_GQ_DATAPOOL_ELEMENT_SIZE
