@@ -35,6 +35,8 @@ static void general_timer_event_handler(nrf_timer_event_t event_type, void* p_co
 static void timer_ubx_event_handler(nrf_timer_event_t event_type, void* p_context);
 
 static void gpio_init(void);
+static void pwm_init(void);
+static void saadc_init(void);
 static void twi_init(void);
 static void spi_init(void);
 static void timer_init(void);
@@ -43,6 +45,18 @@ static void timer_init(void);
 static void gpio_init(void)
 {
     nrf_gpio_cfg_output(ENV_CS_PIN);
+}
+
+
+static void pwm_init(void)
+{
+
+}
+
+
+static void saadc_init(void)
+{
+
 }
 
 
@@ -107,7 +121,7 @@ static void timer_init(void)
 
     nrf_drv_timer_extended_compare(&m_gen_timer,
                                    NRF_TIMER_CC_CHANNEL0,
-                                   nrf_drv_timer_ms_to_ticks(&m_gen_timer, UART_TIMER_STEP),
+                                   nrf_drv_timer_ms_to_ticks(&m_gen_timer, GENERAL_TIMER_STEP),
                                    NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK,
                                    true);
 }
@@ -156,12 +170,12 @@ ret_code_t baro_peripherals_twi_rx(uint16_t device_address, uint8_t *data, uint1
 
 ret_code_t env_peripherals_spi_tx(uint8_t *data, uint16_t data_size)
 {
-
+    return nrf_drv_spi_transfer(&m_env_spi, data, data_size, NULL, 0);
 }
 
 ret_code_t env_peripherals_spi_rx(uint8_t *data, uint16_t data_size)
 {
-
+    return nrf_drv_spi_transfer(&m_env_spi, &data[0], 1, &data[1], data_size);
 }
 
 

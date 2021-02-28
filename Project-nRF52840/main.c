@@ -63,6 +63,7 @@
 #include "ble_advertising.h"
 #include "ble_dis.h"
 #include "ble_bas.h"
+#include "ble_ess.h"
 #include "ble_conn_params.h"
 #include "sensorsim.h"
 #include "nrf_sdh.h"
@@ -81,7 +82,6 @@
 #include "nrf_pwr_mgmt.h"
 
 #include "peripherals.h"
-#include "barometer.h"
 #include "environmental.h"
 
 #include "nrf_log.h"
@@ -132,6 +132,7 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+BLE_ESS_DEF(m_ess);                                                                 /**< Structure used to identify the environmental sensing service. */
 BLE_BAS_DEF(m_bas);                                                                 /**< Structure used to identify the battery service. */
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                             /**< Context for the Queued Write module.*/
@@ -143,6 +144,7 @@ static uint8_t      m_alert_message_buffer[MESSAGE_BUFFER_SIZE];                
 static uint16_t     m_conn_handle        = BLE_CONN_HANDLE_INVALID;                 /**< Handle of the current connection. */
 static ble_uuid_t   m_adv_uuids[] =                                                 /**< Universally unique service identifiers. */
 {
+    {BLE_UUID_ENVIRONMENTAL_SENSING_SERVICE, BLE_UUID_TYPE_BLE},
     {BLE_UUID_BATTERY_SERVICE, BLE_UUID_TYPE_BLE},
     {BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}
 };
@@ -331,14 +333,21 @@ static void alert_notification_error_handler(uint32_t nrf_error)
 static void services_init(void)
 {
     ret_code_t         err_code;
-    ble_dis_init_t     dis_init;
+    ble_ess_init_t     ess_init;
     ble_bas_init_t     bas_init;
+    ble_dis_init_t     dis_init;
     nrf_ble_qwr_init_t qwr_init = {0};
 
     // Initialize Queued Write Module.
     qwr_init.error_handler = nrf_qwr_error_handler;
 
     err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
+    APP_ERROR_CHECK(err_code);
+
+    // Environmental Sensing Service.
+    memset(&ess_init, 0, sizeof(ess_init));
+
+    err_code = ble_ess_init(&m_ess, &ess_init);
     APP_ERROR_CHECK(err_code);
 
     // Initialize Battery Service.
@@ -895,7 +904,7 @@ int main(void)
     conn_params_init();
     peer_manager_init();
 
-    barometer_init();
+    environmental_init();
 
     peripherals_assign_comm_handle(TIMER_BATTERY, battery_level_update);
     peripherals_assign_comm_handle(TIMER_GENERAL, general_timer_handler);

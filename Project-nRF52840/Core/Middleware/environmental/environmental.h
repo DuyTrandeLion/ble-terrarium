@@ -13,7 +13,7 @@ extern "C" {
 
 void environmental_init(void);
 void environmental_read_sensor_data(void);
-void environmental_get_altitude(float *altitude);
+void environmental_get_data(float *temperature, float *humidity, float *pressure, float *gas_resistance, float *altitude);
 
 #ifdef __cplusplus
 }

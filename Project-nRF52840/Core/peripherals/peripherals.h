@@ -49,13 +49,9 @@ extern "C" {
 
 #define BATTERY_LEVEL_MEAS_INTERVAL     APP_TIMER_TICKS(5000)                       /**< Battery level measurement interval (ticks). */
 
-#define UART_TIMER_STEP                   (25)   /* ms */
-#define TWI_TIMER_STEP                    (200)  /* ms */
-#define UART_TIMEOUT_PERIOD               (30)
-#define UART_FAULT_DATA_CLEAR             (10)
-#define GNSS_TWI_PROCESS_DATA_PERIOD      (100)  /* TWI_TIMER_STEP */
-#define BAROMETER_TWI_PROCESS_DATA_PERIOD (500)  /* TWI_TIMER_STEP */
-#define ECOMPASS_TWI_PROCESS_DATA_PERIOD  (200)
+#define GENERAL_TIMER_STEP                    (100)   /* ms */
+#define BAROMETER_TWI_PROCESS_DATA_PERIOD     (500)  /* GENERAL_TIMER_STEP */
+#define ENVIRONMENTAL_TWI_PROCESS_DATA_PERIOD (500)  /* GENERAL_TIMER_STEP */
 
 #define BAROMETER_TRIGGER_PERIOD        3
 
