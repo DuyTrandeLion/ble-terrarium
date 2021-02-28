@@ -78,10 +78,32 @@ typedef struct
     bool                    support_awd_writable_aux;
     bool                    support_aws_notification;
     bool                    support_aws_writable_aux;
+    bool                    support_dp_notification;
+    bool                    support_dp_writable_aux;
+    bool                    support_el_notification;
+    bool                    support_el_writable_aux;
+    bool                    support_gf_notification;
+    bool                    support_gf_writable_aux;
+    bool                    support_hi_notification;
+    bool                    support_hi_writable_aux;
+    bool                    support_hum_notification;
+    bool                    support_hum_writable_aux;
+    bool                    support_ird_notification;
+    bool                    support_ird_writable_aux;
+    int8_t                  initial_dew_point;
+    int8_t                  initial_heat_index;
+    uint8_t                 initial_gust_factor;
     uint16_t                initial_apparent_wind_direction;
     uint16_t                initial_apparent_wind_speed;
+    uint16_t                initial_humidity;
+    uint16_t                initial_irradiance;
+    int32_t                 initial_elevation;
     security_req_t          awd_cccd_wr_sec;                 /**< Security requirement for writing the AWD characteristic CCCD. */
     security_req_t          aws_cccd_wr_sec;                 /**< Security requirement for writing the AWD characteristic CCCD. */
+    security_req_t          dp_cccd_wr_sec;
+    security_req_t          el_cccd_wr_sec;
+    security_req_t          gf_cccd_wr_sec;
+    security_req_t          hi_cccd_wr_sec;
 } ble_ess_init_t;
 
 
@@ -95,11 +117,29 @@ struct ble_ess_s
     bool                      is_awd_writable_aux_supported;
     bool                      is_aws_notification_supported;
     bool                      is_aws_writable_aux_supported;
+    bool                      is_dp_notification_supported;
+    bool                      is_dp_writable_aux_supported;
+    bool                      is_el_notification_supported;
+    bool                      is_el_writable_aux_supported;
+    bool                      is_gf_notification_supported;
+    bool                      is_gf_writable_aux_supported;
+    bool                      is_hi_notification_supported;
+    bool                      is_hi_writable_aux_supported;
+    bool                      is_hum_notification_supported;
+    bool                      is_hum_writable_aux_supported;
+    bool                      is_ird_notification_supported;
+    bool                      is_ird_writable_aux_supported;
     uint16_t                  service_handle;            /**< Handle of Battery Service (as provided by the BLE stack). */
     uint16_t                  conn_handle;               /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */
     ble_gatts_char_handles_t  dc_handles;
     ble_gatts_char_handles_t  awd_handles;
     ble_gatts_char_handles_t  aws_handles;
+    ble_gatts_char_handles_t  dp_handles;
+    ble_gatts_char_handles_t  el_handles;
+    ble_gatts_char_handles_t  gf_handles;
+    ble_gatts_char_handles_t  hi_handles;
+    ble_gatts_char_handles_t  hum_handles;
+    ble_gatts_char_handles_t  ird_handles;
 };
 
 
