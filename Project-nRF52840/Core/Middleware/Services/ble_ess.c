@@ -115,8 +115,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     uint8_t initial_true_wind_direction[MAX_WIN_DIRECTION_LENGTH];
     uint8_t initial_true_wind_speed[MAX_WIN_SPEED_LENGTH];
     uint8_t initial_magnetic_declination[MAX_MAGNETIC_DECLINATION_LENGTH];
-    uint8_t initial_magnetic_flux_density_2d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH];
-    uint8_t initial_magnetic_flux_density_3d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH];
+    uint8_t initial_magnetic_flux_density_2d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 2];
+    uint8_t initial_magnetic_flux_density_3d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 3];
     ret_code_t err_code;
     ble_uuid_t ble_uuid;
     ble_add_char_params_t add_char_params;
@@ -474,8 +474,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     memset(&add_char_params, 0, sizeof(add_char_params));
 
     add_char_params.uuid                  = BLE_UUID_PRESSURE;
-    add_char_params.max_len               = MAX_RAINFALL_LENGTH;
-    add_char_params.init_len              = MAX_RAINFALL_LENGTH;
+    add_char_params.max_len               = MAX_PRESSURE_LENGTH;
+    add_char_params.init_len              = MAX_PRESSURE_LENGTH;
     add_char_params.p_init_value          = initial_pressure;
     add_char_params.char_props.read       = 1;
     add_char_params.char_props.notify     = p_ess->is_ps_notification_supported;
@@ -499,7 +499,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     // Add Temperature characteristic
     memset(&add_char_params, 0, sizeof(add_char_params));
 
-    add_char_params.uuid                  = BLE_UUID_PRESSURE;
+    add_char_params.uuid                  = BLE_UUID_TEMPERATURE;
     add_char_params.max_len               = MAX_TEMPERATURE_LENGTH;
     add_char_params.init_len              = MAX_TEMPERATURE_LENGTH;
     add_char_params.p_init_value          = initial_temperature;
@@ -682,8 +682,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     memset(&add_char_params, 0, sizeof(add_char_params));
 
     add_char_params.uuid                  = BLE_UUID_MAGNETIC_FLUX_DENSITY_2D;
-    add_char_params.max_len               = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
-    add_char_params.init_len              = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
+    add_char_params.max_len               = MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 2;
+    add_char_params.init_len              = MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 2;
     add_char_params.p_init_value          = initial_magnetic_flux_density_2d;
     add_char_params.char_props.read       = 1;
     add_char_params.char_props.notify     = p_ess->is_mfd2d_notification_supported;
@@ -708,8 +708,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     memset(&add_char_params, 0, sizeof(add_char_params));
 
     add_char_params.uuid                  = BLE_UUID_MAGNETIC_FLUX_DENSITY_3D;
-    add_char_params.max_len               = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
-    add_char_params.init_len              = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
+    add_char_params.max_len               = MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 3;
+    add_char_params.init_len              = MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 3;
     add_char_params.p_init_value          = initial_magnetic_flux_density_3d;
     add_char_params.char_props.read       = 1;
     add_char_params.char_props.notify     = p_ess->is_mfd3d_notification_supported;

@@ -123,8 +123,11 @@ typedef struct
     uint8_t                 initial_uv_index;
     uint8_t                 initial_barometric_pressure_trend;
     int16_t                 initial_temperature;
-    int16_t                 initial_magnetic_flux_density_2d;
-    int16_t                 initial_magnetic_flux_density_3d;
+    int16_t                 initial_magnetic_flux_density_2d_x;
+    int16_t                 initial_magnetic_flux_density_2d_y;
+    int16_t                 initial_magnetic_flux_density_3d_x;
+    int16_t                 initial_magnetic_flux_density_3d_y;
+    int16_t                 initial_magnetic_flux_density_3d_z;
     uint16_t                initial_apparent_wind_direction;
     uint16_t                initial_apparent_wind_speed;
     uint16_t                initial_humidity;

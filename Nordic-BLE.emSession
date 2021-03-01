@@ -118,7 +118,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="888" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/main.c" selected="0" top="866" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="888" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/main.c" selected="1" top="884" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="105" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/environmental/environmental.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="15" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/environmental/environmental.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="98" useTextEdit="1" openedFrom="C:/ble-terrarium/Project-nRF52840/Core/Middleware/environmental/environmental.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/peripherals/peripherals.c" selected="0" top="72" codecName="Default"/>
@@ -126,10 +126,9 @@
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="378" useTextEdit="1" openedFrom="C:/ble-terrarium/Project-nRF52840/Core/Middleware/environmental/environmental.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Drivers/BME680_driver/bme680_defs.h" selected="0" top="362" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="155" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Drivers/BME680_driver/bme680.h" selected="0" top="141" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="669" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Drivers/BME680_driver/bme680.c" selected="0" top="628" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="73" y="657" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.c" selected="1" top="644" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="37" y="30" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/Services/ble_ess.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.h" selected="0" top="10" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="81" y="711" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.c" selected="0" top="643" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="62" y="129" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/Services/ble_ess.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.h" selected="0" top="100" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="347" useTextEdit="1" openedFrom="C:/ble-terrarium/nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_srv_common.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_srv_common.h" selected="0" top="313" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="98" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/libraries/util/app_error_weak.c" selected="0" top="76" codecName=""/>
  </Files>
  <ARMCrossStudioWindow activeProject="BLE-nRF52840" fileDialogDefaultFilter="*" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 5.34/source/thumb_crt0.s&#xa;&#xa;D:/Nordic-Embedded/ble-rd/nRF5_SDK_17.0.0_9d13099/modules/nrfx/mdk/ses_startup_nrf52840.s&#xa;D:/Nordic-Embedded/ble-gnss/nRF5_SDK_17.0.0_9d13099/modules/nrfx/mdk/ses_startup_nrf52840.s" fileDialogInitialDirectory="C:/ble-terrarium/Project-nRF52840/Core/Middleware/Services" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
