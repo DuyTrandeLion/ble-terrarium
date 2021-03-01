@@ -4,11 +4,17 @@
 #include "ble_srv_common.h"
 #include "ble_conn_state.h"
 
-#define MAX_WIN_DIRECTION_LENGTH  2
-#define MAX_WIN_SPEED_LENGTH      2
-#define MAX_ELEVATION_LENGTH      3
-#define MAX_HUMIDITY_LENGTH       2
-#define MAX_IRRADIANCE_LENGTH     2
+#define MAX_WIN_DIRECTION_LENGTH          2
+#define MAX_WIN_SPEED_LENGTH              2
+#define MAX_ELEVATION_LENGTH              3
+#define MAX_HUMIDITY_LENGTH               2
+#define MAX_IRRADIANCE_LENGTH             2
+#define MAX_POLLEN_CONCENTRATION_LENGTH   3
+#define MAX_RAINFALL_LENGTH               2
+#define MAX_PRESSURE_LENGTH               4
+#define MAX_TEMPERATURE_LENGTH            2
+#define MAX_MAGNETIC_DECLINATION_LENGTH   2
+#define MAX_MAGNETIC_FLUX_DENSITY_LENGTH  2
 
 static ret_code_t support_descriptor_add(uint16_t char_handle);
 
@@ -93,12 +99,24 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
 {
     int8_t  initial_dew_point;
     int8_t  initial_heat_index;
+    int8_t  initial_wind_chill;
     uint8_t initial_gust_factor;
+    uint8_t initial_uv_index;
+    uint8_t initial_barometric_pressure_trend;
     uint8_t initial_apparent_wind_direction[MAX_WIN_DIRECTION_LENGTH];
     uint8_t initial_apparent_wind_speed[MAX_WIN_SPEED_LENGTH];
     uint8_t initial_elevation[MAX_ELEVATION_LENGTH];
     uint8_t initial_humidity[MAX_HUMIDITY_LENGTH];
     uint8_t initial_irradiance[MAX_IRRADIANCE_LENGTH];
+    uint8_t initial_pollen_concentration[MAX_POLLEN_CONCENTRATION_LENGTH];
+    uint8_t initial_rainfall[MAX_RAINFALL_LENGTH];
+    uint8_t initial_pressure[MAX_PRESSURE_LENGTH];
+    uint8_t initial_temperature[MAX_TEMPERATURE_LENGTH];
+    uint8_t initial_true_wind_direction[MAX_WIN_DIRECTION_LENGTH];
+    uint8_t initial_true_wind_speed[MAX_WIN_SPEED_LENGTH];
+    uint8_t initial_magnetic_declination[MAX_MAGNETIC_DECLINATION_LENGTH];
+    uint8_t initial_magnetic_flux_density_2d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH];
+    uint8_t initial_magnetic_flux_density_3d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH];
     ret_code_t err_code;
     ble_uuid_t ble_uuid;
     ble_add_char_params_t add_char_params;
@@ -129,11 +147,38 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     p_ess->is_hum_writable_aux_supported  = p_ess_init->support_hum_writable_aux;
     p_ess->is_ird_notification_supported  = p_ess_init->support_ird_notification;
     p_ess->is_ird_writable_aux_supported  = p_ess_init->support_ird_writable_aux;
+    p_ess->is_pc_notification_supported   = p_ess_init->support_pc_notification;
+    p_ess->is_pc_writable_aux_supported   = p_ess_init->support_pc_writable_aux;
+    p_ess->is_rf_notification_supported   = p_ess_init->support_rf_notification;
+    p_ess->is_rf_writable_aux_supported   = p_ess_init->support_rf_writable_aux;
+    p_ess->is_ps_notification_supported   = p_ess_init->support_ps_notification;
+    p_ess->is_ps_writable_aux_supported   = p_ess_init->support_ps_writable_aux;
+    p_ess->is_tem_notification_supported  = p_ess_init->support_tem_notification;
+    p_ess->is_tem_writable_aux_supported  = p_ess_init->support_tem_writable_aux;
+    p_ess->is_twd_notification_supported  = p_ess_init->support_twd_notification;
+    p_ess->is_twd_writable_aux_supported  = p_ess_init->support_twd_writable_aux;
+    p_ess->is_tws_notification_supported  = p_ess_init->support_tws_notification;
+    p_ess->is_tws_writable_aux_supported  = p_ess_init->support_tws_writable_aux;
+    p_ess->is_uvi_notification_supported  = p_ess_init->support_uvi_notification;
+    p_ess->is_uvi_writable_aux_supported  = p_ess_init->support_uvi_writable_aux;
+    p_ess->is_wc_notification_supported   = p_ess_init->support_wc_notification;
+    p_ess->is_wc_writable_aux_supported   = p_ess_init->support_wc_writable_aux;
+    p_ess->is_bpt_notification_supported  = p_ess_init->support_bpt_notification;
+    p_ess->is_bpt_writable_aux_supported  = p_ess_init->support_bpt_writable_aux;
+    p_ess->is_md_notification_supported   = p_ess_init->support_md_notification;
+    p_ess->is_md_writable_aux_supported   = p_ess_init->support_md_writable_aux;
+    p_ess->is_mfd2d_notification_supported  = p_ess_init->support_mfd2d_notification;
+    p_ess->is_mfd2d_writable_aux_supported  = p_ess_init->support_mfd2d_writable_aux;
+    p_ess->is_mfd3d_notification_supported  = p_ess_init->support_mfd3d_notification;
+    p_ess->is_mfd3d_writable_aux_supported  = p_ess_init->support_mfd3d_writable_aux;
     p_ess->conn_handle                    = BLE_CONN_HANDLE_INVALID;
 
     initial_dew_point               = p_ess_init->initial_dew_point;
     initial_gust_factor             = p_ess_init->initial_gust_factor;
     initial_heat_index              = p_ess_init->initial_heat_index;
+    initial_uv_index                = p_ess_init->initial_uv_index;
+    initial_wind_chill              = p_ess_init->initial_wind_chill;
+    initial_barometric_pressure_trend = p_ess_init->initial_barometric_pressure_trend;
 
     // Add service
     BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_ENVIRONMENTAL_SENSING_SERVICE);
@@ -368,6 +413,318 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     }
 
     err_code = support_descriptor_add(p_ess->ird_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Pollen Concentration characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_POLLEN_CONCENTRATION;
+    add_char_params.max_len               = MAX_POLLEN_CONCENTRATION_LENGTH;
+    add_char_params.init_len              = MAX_POLLEN_CONCENTRATION_LENGTH;
+    add_char_params.p_init_value          = initial_pollen_concentration;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_pc_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_pc_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->pc_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->pc_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Rainfall characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_RAINFALL;
+    add_char_params.max_len               = MAX_RAINFALL_LENGTH;
+    add_char_params.init_len              = MAX_RAINFALL_LENGTH;
+    add_char_params.p_init_value          = initial_rainfall;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_rf_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_rf_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->rf_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->rf_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Pressure characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_PRESSURE;
+    add_char_params.max_len               = MAX_RAINFALL_LENGTH;
+    add_char_params.init_len              = MAX_RAINFALL_LENGTH;
+    add_char_params.p_init_value          = initial_pressure;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_ps_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_ps_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->ps_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->ps_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Temperature characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_PRESSURE;
+    add_char_params.max_len               = MAX_TEMPERATURE_LENGTH;
+    add_char_params.init_len              = MAX_TEMPERATURE_LENGTH;
+    add_char_params.p_init_value          = initial_temperature;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_tem_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_tem_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->tem_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->tem_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add True Wind Direction characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_TRUE_WIND_DIRECTION;
+    add_char_params.max_len               = MAX_WIN_DIRECTION_LENGTH;
+    add_char_params.init_len              = MAX_WIN_DIRECTION_LENGTH;
+    add_char_params.p_init_value          = initial_true_wind_direction;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_twd_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_twd_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->twd_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->twd_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add True Wind Speed characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_TRUE_WIND_SPEED;
+    add_char_params.max_len               = MAX_WIN_SPEED_LENGTH;
+    add_char_params.init_len              = MAX_WIN_SPEED_LENGTH;
+    add_char_params.p_init_value          = initial_true_wind_speed;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_tws_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_tws_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->tws_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->tws_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add UV Index characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_UV_INDEX;
+    add_char_params.max_len               = sizeof(uint8_t);
+    add_char_params.init_len              = sizeof(uint8_t);
+    add_char_params.p_init_value          = &initial_uv_index;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_uvi_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_uvi_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->uvi_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->uvi_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Wind Chill characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_WIND_CHILL;
+    add_char_params.max_len               = sizeof(int8_t);
+    add_char_params.init_len              = sizeof(int8_t);
+    add_char_params.p_init_value          = &initial_wind_chill;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_wc_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_wc_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->wc_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->wc_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Barometric Pressure Trend characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_BAROMETRIC_PRESSURE_TREND;
+    add_char_params.max_len               = sizeof(uint8_t);
+    add_char_params.init_len              = sizeof(uint8_t);
+    add_char_params.p_init_value          = &initial_barometric_pressure_trend;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_bpt_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_bpt_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->bpt_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->bpt_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Magnetic Declination characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_MAGNETIC_DECLINATION;
+    add_char_params.max_len               = MAX_MAGNETIC_DECLINATION_LENGTH;
+    add_char_params.init_len              = MAX_MAGNETIC_DECLINATION_LENGTH;
+    add_char_params.p_init_value          = initial_magnetic_declination;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_md_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_md_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->md_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->md_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Magnetic Flux Density 2D characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_MAGNETIC_FLUX_DENSITY_2D;
+    add_char_params.max_len               = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
+    add_char_params.init_len              = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
+    add_char_params.p_init_value          = initial_magnetic_flux_density_2d;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_mfd2d_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_mfd2d_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->mfd2d_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->mfd2d_handles.value_handle);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Add Magnetic Flux Density 3D characteristic
+    memset(&add_char_params, 0, sizeof(add_char_params));
+
+    add_char_params.uuid                  = BLE_UUID_MAGNETIC_FLUX_DENSITY_3D;
+    add_char_params.max_len               = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
+    add_char_params.init_len              = MAX_MAGNETIC_FLUX_DENSITY_LENGTH;
+    add_char_params.p_init_value          = initial_magnetic_flux_density_3d;
+    add_char_params.char_props.read       = 1;
+    add_char_params.char_props.notify     = p_ess->is_mfd3d_notification_supported;
+    add_char_params.char_ext_props.wr_aux = p_ess->is_mfd3d_writable_aux_supported;
+    add_char_params.p_user_descr          = &user_descr_params;
+
+    err_code = characteristic_add(p_ess->service_handle,
+                                  &add_char_params,
+                                  &(p_ess->mfd3d_handles));
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = support_descriptor_add(p_ess->mfd3d_handles.value_handle);
     if (err_code != NRF_SUCCESS)
     {
         return err_code;

@@ -24,10 +24,11 @@ extern "C" {
 #define BLE_UUID_POLLEN_CONCENTRATION               0x2A75
 #define BLE_UUID_UV_INDEX                           0x2A76
 #define BLE_UUID_IRRADIANCE                         0x2A77
-#define BLE_UUID_RAIN_FALL                          0x2A78
+#define BLE_UUID_RAINFALL                           0x2A78
 #define BLE_UUID_WIND_CHILL                         0x2A79
 #define BLE_UUID_HEAT_INDEX                         0x2A7A
 #define BLE_UUID_DEW_POINT                          0x2A7B
+#define BLE_UUID_MAGNETIC_DECLINATION               0x2A7C
 #define BLE_UUID_DESCRIPTOR_VALUE_CHANGED           0x2A7D
 #define BLE_UUID_MAGNETIC_FLUX_DENSITY_2D           0x2AA0
 #define BLE_UUID_MAGNETIC_FLUX_DENSITY_3D           0x2AA1
@@ -90,20 +91,72 @@ typedef struct
     bool                    support_hum_writable_aux;
     bool                    support_ird_notification;
     bool                    support_ird_writable_aux;
+    bool                    support_pc_notification;
+    bool                    support_pc_writable_aux;
+    bool                    support_rf_notification;
+    bool                    support_rf_writable_aux;
+    bool                    support_ps_notification;
+    bool                    support_ps_writable_aux;
+    bool                    support_tem_notification;
+    bool                    support_tem_writable_aux;
+    bool                    support_twd_notification;
+    bool                    support_twd_writable_aux;
+    bool                    support_tws_notification;
+    bool                    support_tws_writable_aux;
+    bool                    support_uvi_notification;
+    bool                    support_uvi_writable_aux;
+    bool                    support_wc_notification;
+    bool                    support_wc_writable_aux;
+    bool                    support_bpt_notification;
+    bool                    support_bpt_writable_aux;
+    bool                    support_md_notification;
+    bool                    support_md_writable_aux;
+    bool                    support_mfd2d_notification;
+    bool                    support_mfd2d_writable_aux;
+    bool                    support_mfd3d_notification;
+    bool                    support_mfd3d_writable_aux;
+
     int8_t                  initial_dew_point;
     int8_t                  initial_heat_index;
+    int8_t                  initial_wind_chill;
     uint8_t                 initial_gust_factor;
+    uint8_t                 initial_uv_index;
+    uint8_t                 initial_barometric_pressure_trend;
+    int16_t                 initial_temperature;
+    int16_t                 initial_magnetic_flux_density_2d;
+    int16_t                 initial_magnetic_flux_density_3d;
     uint16_t                initial_apparent_wind_direction;
     uint16_t                initial_apparent_wind_speed;
     uint16_t                initial_humidity;
     uint16_t                initial_irradiance;
+    uint16_t                initial_true_wind_direction;
+    uint16_t                initial_true_wind_speed;
+    uint16_t                initial_rainfall;
+    uint16_t                initial_magnetic_declination;
     int32_t                 initial_elevation;
+    uint32_t                initial_pollen_concentration;
+    uint32_t                initial_pressure; 
+
     security_req_t          awd_cccd_wr_sec;                 /**< Security requirement for writing the AWD characteristic CCCD. */
     security_req_t          aws_cccd_wr_sec;                 /**< Security requirement for writing the AWD characteristic CCCD. */
     security_req_t          dp_cccd_wr_sec;
     security_req_t          el_cccd_wr_sec;
     security_req_t          gf_cccd_wr_sec;
     security_req_t          hi_cccd_wr_sec;
+    security_req_t          hum_cccd_wr_sec;
+    security_req_t          ird_cccd_wr_sec;
+    security_req_t          pc_cccd_wr_sec;
+    security_req_t          rf_cccd_wr_sec;
+    security_req_t          ps_cccd_wr_sec;
+    security_req_t          tem_cccd_wr_sec;
+    security_req_t          twd_cccd_wr_sec;                 /**< Security requirement for writing the AWD characteristic CCCD. */
+    security_req_t          tws_cccd_wr_sec; 
+    security_req_t          uvi_cccd_wr_sec;
+    security_req_t          wc_cccd_wr_sec;
+    security_req_t          bpt_cccd_wr_sec;
+    security_req_t          md_cccd_wr_sec;
+    security_req_t          mfd2d_cccd_wr_sec;
+    security_req_t          mfd3d_cccd_wr_sec;
 } ble_ess_init_t;
 
 
@@ -129,6 +182,30 @@ struct ble_ess_s
     bool                      is_hum_writable_aux_supported;
     bool                      is_ird_notification_supported;
     bool                      is_ird_writable_aux_supported;
+    bool                      is_pc_notification_supported;
+    bool                      is_pc_writable_aux_supported;
+    bool                      is_rf_notification_supported;
+    bool                      is_rf_writable_aux_supported;
+    bool                      is_ps_notification_supported;
+    bool                      is_ps_writable_aux_supported;
+    bool                      is_tem_notification_supported;
+    bool                      is_tem_writable_aux_supported;
+    bool                      is_twd_notification_supported;
+    bool                      is_twd_writable_aux_supported;
+    bool                      is_tws_notification_supported;
+    bool                      is_tws_writable_aux_supported;
+    bool                      is_uvi_notification_supported;
+    bool                      is_uvi_writable_aux_supported;
+    bool                      is_wc_notification_supported;
+    bool                      is_wc_writable_aux_supported;
+    bool                      is_bpt_notification_supported;
+    bool                      is_bpt_writable_aux_supported;
+    bool                      is_md_notification_supported;
+    bool                      is_md_writable_aux_supported;
+    bool                      is_mfd2d_notification_supported;
+    bool                      is_mfd2d_writable_aux_supported;
+    bool                      is_mfd3d_notification_supported;
+    bool                      is_mfd3d_writable_aux_supported;
     uint16_t                  service_handle;            /**< Handle of Battery Service (as provided by the BLE stack). */
     uint16_t                  conn_handle;               /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */
     ble_gatts_char_handles_t  dc_handles;
@@ -140,6 +217,18 @@ struct ble_ess_s
     ble_gatts_char_handles_t  hi_handles;
     ble_gatts_char_handles_t  hum_handles;
     ble_gatts_char_handles_t  ird_handles;
+    ble_gatts_char_handles_t  pc_handles;
+    ble_gatts_char_handles_t  rf_handles;
+    ble_gatts_char_handles_t  ps_handles;
+    ble_gatts_char_handles_t  tem_handles;
+    ble_gatts_char_handles_t  twd_handles;
+    ble_gatts_char_handles_t  tws_handles;
+    ble_gatts_char_handles_t  uvi_handles;
+    ble_gatts_char_handles_t  wc_handles;
+    ble_gatts_char_handles_t  bpt_handles;
+    ble_gatts_char_handles_t  md_handles;
+    ble_gatts_char_handles_t  mfd2d_handles;
+    ble_gatts_char_handles_t  mfd3d_handles;
 };
 
 
