@@ -19,9 +19,63 @@
 static ret_code_t support_descriptor_add(uint16_t char_handle);
 
 
+/**@brief Function for handling the Connect event.
+ *
+ * @param[in]   p_ess       Environmental Sensing Service structure.
+ * @param[in]   p_ble_evt   Event received from the BLE stack.
+ */
+static void on_connect(ble_ess_t * p_ess, ble_evt_t const * p_ble_evt)
+{
+    p_ess->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+}
+
+
+/**@brief Function for handling the Disconnect event.
+ *
+ * @param[in]   p_ess       Environmental Sensing Service structure.
+ * @param[in]   p_ble_evt   Event received from the BLE stack.
+ */
+static void on_disconnect(ble_ess_t * p_ess, ble_evt_t const * p_ble_evt)
+{
+    UNUSED_PARAMETER(p_ble_evt);
+    p_ess->conn_handle = BLE_CONN_HANDLE_INVALID;
+}
+
+
 void ble_ess_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context)
 {
+    ble_ess_t * p_ess = (ble_ess_t *) p_context;
+    
+    if (p_ess == NULL || p_ble_evt == NULL)
+    {
+        return;
+    }
 
+    switch (p_ble_evt->header.evt_id)
+    {
+        case BLE_GAP_EVT_CONNECTED:
+        {
+            on_connect(p_ess, p_ble_evt);
+            break;
+        }
+
+        case BLE_GAP_EVT_DISCONNECTED:
+        {
+            on_disconnect(p_ess, p_ble_evt);
+            break;
+        }
+
+        case BLE_GATTS_EVT_WRITE:
+        {
+           break;
+        }
+
+        default:
+        {
+            // No implementation needed.
+            break;
+        }
+    }
 }
 
 
