@@ -344,8 +344,29 @@ static void services_init(void)
     err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
     APP_ERROR_CHECK(err_code);
 
-    // Environmental Sensing Service.
+    // Initialize Environmental Sensing Service.
     memset(&ess_init, 0, sizeof(ess_init));
+
+    ess_init.awd_cccd_rd_sec    = SEC_OPEN;
+    ess_init.aws_cccd_rd_sec    = SEC_OPEN;
+    ess_init.bpt_cccd_rd_sec    = SEC_OPEN;
+    ess_init.dp_cccd_rd_sec     = SEC_OPEN;
+    ess_init.el_cccd_rd_sec     = SEC_OPEN;
+    ess_init.gf_cccd_rd_sec     = SEC_OPEN;
+    ess_init.hi_cccd_rd_sec     = SEC_OPEN;
+    ess_init.hum_cccd_rd_sec    = SEC_OPEN;
+    ess_init.ird_cccd_rd_sec    = SEC_OPEN;
+    ess_init.md_cccd_rd_sec     = SEC_OPEN;
+    ess_init.mfd2d_cccd_rd_sec  = SEC_OPEN;
+    ess_init.mfd3d_cccd_rd_sec  = SEC_OPEN;
+    ess_init.pc_cccd_rd_sec     = SEC_OPEN;
+    ess_init.ps_cccd_rd_sec     = SEC_OPEN;
+    ess_init.rf_cccd_rd_sec     = SEC_OPEN;
+    ess_init.tem_cccd_rd_sec    = SEC_OPEN;
+    ess_init.twd_cccd_rd_sec    = SEC_OPEN;
+    ess_init.tws_cccd_rd_sec    = SEC_OPEN;
+    ess_init.uvi_cccd_rd_sec    = SEC_OPEN;
+    ess_init.wc_cccd_rd_sec     = SEC_OPEN;
 
     err_code = ble_ess_init(&m_ess, &ess_init);
     APP_ERROR_CHECK(err_code);

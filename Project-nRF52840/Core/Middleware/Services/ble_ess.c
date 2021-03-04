@@ -275,6 +275,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_awd_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_awd_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->awd_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -301,6 +302,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_aws_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_aws_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->aws_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -327,6 +329,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_dp_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_dp_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->dp_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -353,6 +356,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_el_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_el_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->el_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -379,6 +383,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_gf_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_gf_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->gf_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -405,6 +410,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_hi_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_hi_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->hi_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -431,6 +437,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_hum_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_hum_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->hum_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -457,6 +464,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_ird_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_ird_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->ird_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -483,6 +491,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_pc_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_pc_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->pc_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -509,6 +518,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_rf_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_rf_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->rf_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -535,6 +545,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_ps_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_ps_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->ps_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -561,6 +572,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_tem_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_tem_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->tem_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -587,6 +599,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_twd_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_twd_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->twd_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -613,6 +626,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_tws_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_tws_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->tws_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -639,6 +653,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_uvi_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_uvi_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->uvi_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -665,6 +680,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_wc_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_wc_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->wc_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -691,6 +707,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_bpt_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_bpt_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->bpt_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -717,6 +734,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_md_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_md_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->md_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -743,6 +761,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_mfd2d_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_mfd2d_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->mfd2d_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -769,6 +788,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_mfd3d_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_mfd3d_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
+    add_char_params.read_access           = p_ess_init->mfd3d_cccd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -785,4 +805,164 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     }
 
     return err_code;
+}
+
+
+ret_code_t ble_ess_apparent_wind_direction_update(ble_ess_t * p_ess,
+                                                  uint16_t    apparent_wind_direction,
+                                                  uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_wind_speed_update(ble_ess_t * p_ess,
+                                              uint16_t    apparent_wind_speed,
+                                              uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_dew_point_update(ble_ess_t * p_ess,
+                                             int8_t      dew_point,
+                                             uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_elevation_update(ble_ess_t * p_ess,
+                                             int32_t     elevation,
+                                             uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_gust_factor_update(ble_ess_t * p_ess,
+                                               uint8_t     gust_factor,
+                                               uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_heat_index_update(ble_ess_t * p_ess,
+                                              int8_t      heat_index,
+                                              uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_humidity_update(ble_ess_t * p_ess,
+                                            uint16_t    humidity,
+                                            uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_irradiance_update(ble_ess_t * p_ess,
+                                              uint16_t    irradiance,
+                                              uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_pollen_concentration_update(ble_ess_t * p_ess,
+                                                        uint32_t    pollen_concentration,
+                                                        uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_rainfall_update(ble_ess_t * p_ess,
+                                            uint16_t    rainfall,
+                                            uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_pressure_update(ble_ess_t * p_ess,
+                                            uint32_t    pressure,
+                                            uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_apparent_temperature_update(ble_ess_t * p_ess,
+                                               int16_t     temperature,
+                                               uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_true_wind_direction_update(ble_ess_t * p_ess,
+                                              uint16_t    true_wind_direction,
+                                              uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_true_wind_speed_update(ble_ess_t * p_ess,
+                                          uint16_t    true_wind_speed,
+                                          uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_uv_index_update(ble_ess_t * p_ess,
+                                   uint8_t     uv_index,
+                                   uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_wind_chill_update(ble_ess_t * p_ess,
+                                     int8_t      wind_chill,
+                                     uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_barometric_pressure_trend_update(ble_ess_t * p_ess,
+                                                    uint8_t     barometric_pressure_trend,
+                                                    uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_magnetic_declination_update(ble_ess_t * p_ess,
+                                               uint16_t    magnetic_declination,
+                                               uint16_t    conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_mfd2d_update(ble_ess_t                  * p_ess,
+                                magnetic_flux_density_2d_t   mdf2d,
+                                uint16_t                     conn_handle)
+{
+
+}
+
+
+ret_code_t ble_ess_mfd3d_update(ble_ess_t                  * p_ess,
+                                magnetic_flux_density_3d_t   mdf3d,
+                                uint16_t                     conn_handle)
+{
+
 }
