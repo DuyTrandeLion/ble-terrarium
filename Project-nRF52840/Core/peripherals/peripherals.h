@@ -47,7 +47,7 @@ extern "C" {
 #define GPIO_PIN_RESET                  0
 #endif
 
-#define BATTERY_LEVEL_MEAS_INTERVAL     APP_TIMER_TICKS(5000)                       /**< Battery level measurement interval (ticks). */
+#define BLE_UPDATE_INTERVAL             APP_TIMER_TICKS(5000)                       /**< Battery level measurement interval (ticks). */
 
 #define GENERAL_TIMER_STEP                    (100)   /* ms */
 #define BAROMETER_TWI_PROCESS_DATA_PERIOD     (500)  /* GENERAL_TIMER_STEP */
@@ -61,8 +61,8 @@ extern "C" {
 #define TIMER_BAROMETER                 (EEP_COMM + 1)
 #define TIMER_ENVIRONMENTAL             (TIMER_BAROMETER + 1)
 #define TIMER_EEP                       (TIMER_ENVIRONMENTAL + 1)
-#define TIMER_BATTERY                   (TIMER_EEP + 1)
-#define TIMER_GENERAL                   (TIMER_BATTERY + 1)
+#define TIMER_BLE_UPDATE                (TIMER_EEP + 1)
+#define TIMER_GENERAL                   (TIMER_BLE_UPDATE + 1)
 
 typedef void (*comm_handle_fptr)(void);
 

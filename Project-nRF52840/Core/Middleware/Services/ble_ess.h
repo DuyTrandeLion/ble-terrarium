@@ -264,9 +264,9 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init);
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess                     Environmental Sensing Service structure.
+ * @param[in]   apparent_wind_direction   New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle               Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -281,9 +281,9 @@ ret_code_t ble_ess_apparent_wind_direction_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess                 Environmental Sensing Service structure.
+ * @param[in]   apparent_wind_speed   New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle           Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -299,15 +299,15 @@ ret_code_t ble_ess_apparent_wind_speed_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   dew_point       New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-ret_code_t ble_ess_apparent_dew_point_update(ble_ess_t * p_ess,
-                                             int8_t      dew_point,
-                                             uint16_t    conn_handle);
+ret_code_t ble_ess_dew_point_update(ble_ess_t * p_ess,
+                                    int8_t      dew_point,
+                                    uint16_t    conn_handle);
 
 
 /**@brief Function for updating the battery level.
@@ -317,15 +317,15 @@ ret_code_t ble_ess_apparent_dew_point_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   elevation       New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-ret_code_t ble_ess_apparent_elevation_update(ble_ess_t * p_ess,
-                                             int32_t     elevation,
-                                             uint16_t    conn_handle);
+ret_code_t ble_ess_elevation_update(ble_ess_t * p_ess,
+                                    int32_t     elevation,
+                                    uint16_t    conn_handle);
 
 
 /**@brief Function for updating the battery level.
@@ -335,14 +335,86 @@ ret_code_t ble_ess_apparent_elevation_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   gust_factor     New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-ret_code_t ble_ess_apparent_gust_factor_update(ble_ess_t * p_ess,
-                                               uint8_t     gust_factor,
+ret_code_t ble_ess_gust_factor_update(ble_ess_t * p_ess,
+                                      uint8_t     gust_factor,
+                                      uint16_t    conn_handle);
+
+
+/**@brief Function for updating the battery level.
+ *
+ * @details The application calls this function after having performed a battery measurement.
+ *          The battery level characteristic will only be sent to the clients which have
+ *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
+ *          to send notifications to all connected devices.
+ *
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   heat_index      New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+ret_code_t ble_ess_heat_index_update(ble_ess_t * p_ess,
+                                     int8_t      heat_index,
+                                     uint16_t    conn_handle);
+
+
+/**@brief Function for updating the battery level.
+ *
+ * @details The application calls this function after having performed a battery measurement.
+ *          The battery level characteristic will only be sent to the clients which have
+ *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
+ *          to send notifications to all connected devices.
+ *
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   humidity        New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+ret_code_t ble_ess_humidity_update(ble_ess_t * p_ess,
+                                   uint16_t    humidity,
+                                   uint16_t    conn_handle);
+
+
+/**@brief Function for updating the battery level.
+ *
+ * @details The application calls this function after having performed a battery measurement.
+ *          The battery level characteristic will only be sent to the clients which have
+ *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
+ *          to send notifications to all connected devices.
+ *
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   irradiance      New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+ret_code_t ble_ess_irradiance_update(ble_ess_t * p_ess,
+                                     uint16_t    irradiance,
+                                     uint16_t    conn_handle);
+
+
+/**@brief Function for updating the battery level.
+ *
+ * @details The application calls this function after having performed a battery measurement.
+ *          The battery level characteristic will only be sent to the clients which have
+ *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
+ *          to send notifications to all connected devices.
+ *
+ * @param[in]   p_ess                 Environmental Sensing Service structure.
+ * @param[in]   pollen_concentration  New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle           Connection handle.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+ret_code_t ble_ess_pollen_concentration_update(ble_ess_t * p_ess,
+                                               uint32_t    pollen_concentration,
                                                uint16_t    conn_handle);
 
 
@@ -353,15 +425,15 @@ ret_code_t ble_ess_apparent_gust_factor_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   rainfall        New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-ret_code_t ble_ess_apparent_heat_index_update(ble_ess_t * p_ess,
-                                              int8_t      heat_index,
-                                              uint16_t    conn_handle);
+ret_code_t ble_ess_rainfall_update(ble_ess_t * p_ess,
+                                   uint16_t    rainfall,
+                                   uint16_t    conn_handle);
 
 
 /**@brief Function for updating the battery level.
@@ -371,15 +443,15 @@ ret_code_t ble_ess_apparent_heat_index_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   pressure        New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-ret_code_t ble_ess_apparent_humidity_update(ble_ess_t * p_ess,
-                                            uint16_t    humidity,
-                                            uint16_t    conn_handle);
+ret_code_t ble_ess_pressure_update(ble_ess_t * p_ess,
+                                   uint32_t    pressure,
+                                   uint16_t    conn_handle);
 
 
 /**@brief Function for updating the battery level.
@@ -389,15 +461,15 @@ ret_code_t ble_ess_apparent_humidity_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   temperature     New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-ret_code_t ble_ess_apparent_irradiance_update(ble_ess_t * p_ess,
-                                              uint16_t    irradiance,
-                                              uint16_t    conn_handle);
+ret_code_t ble_ess_temperature_update(ble_ess_t * p_ess,
+                                      int16_t     temperature,
+                                      uint16_t    conn_handle);
 
 
 /**@brief Function for updating the battery level.
@@ -407,81 +479,9 @@ ret_code_t ble_ess_apparent_irradiance_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
- *
- * @return      NRF_SUCCESS on success, otherwise an error code.
- */
-ret_code_t ble_ess_apparent_pollen_concentration_update(ble_ess_t * p_ess,
-                                                        uint32_t    pollen_concentration,
-                                                        uint16_t    conn_handle);
-
-
-/**@brief Function for updating the battery level.
- *
- * @details The application calls this function after having performed a battery measurement.
- *          The battery level characteristic will only be sent to the clients which have
- *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
- *          to send notifications to all connected devices.
- *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
- *
- * @return      NRF_SUCCESS on success, otherwise an error code.
- */
-ret_code_t ble_ess_apparent_rainfall_update(ble_ess_t * p_ess,
-                                            uint16_t    rainfall,
-                                            uint16_t    conn_handle);
-
-
-/**@brief Function for updating the battery level.
- *
- * @details The application calls this function after having performed a battery measurement.
- *          The battery level characteristic will only be sent to the clients which have
- *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
- *          to send notifications to all connected devices.
- *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
- *
- * @return      NRF_SUCCESS on success, otherwise an error code.
- */
-ret_code_t ble_ess_apparent_pressure_update(ble_ess_t * p_ess,
-                                            uint32_t    pressure,
-                                            uint16_t    conn_handle);
-
-
-/**@brief Function for updating the battery level.
- *
- * @details The application calls this function after having performed a battery measurement.
- *          The battery level characteristic will only be sent to the clients which have
- *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
- *          to send notifications to all connected devices.
- *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
- *
- * @return      NRF_SUCCESS on success, otherwise an error code.
- */
-ret_code_t ble_ess_apparent_temperature_update(ble_ess_t * p_ess,
-                                               int16_t     temperature,
-                                               uint16_t    conn_handle);
-
-
-/**@brief Function for updating the battery level.
- *
- * @details The application calls this function after having performed a battery measurement.
- *          The battery level characteristic will only be sent to the clients which have
- *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
- *          to send notifications to all connected devices.
- *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess                 Environmental Sensing Service structure.
+ * @param[in]   true_wind_direction   New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle           Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -496,9 +496,9 @@ ret_code_t ble_ess_true_wind_direction_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess             Environmental Sensing Service structure.
+ * @param[in]   true_wind_speed   New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle       Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -514,9 +514,9 @@ ret_code_t ble_ess_true_wind_speed_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   uv_index        New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -532,9 +532,9 @@ ret_code_t ble_ess_uv_index_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   wind_chill      New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -550,9 +550,9 @@ ret_code_t ble_ess_wind_chill_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess                       Environmental Sensing Service structure.
+ * @param[in]   barometric_pressure_trend   New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle                 Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -568,9 +568,9 @@ ret_code_t ble_ess_barometric_pressure_trend_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess                 Environmental Sensing Service structure.
+ * @param[in]   magnetic_declination  New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle           Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -586,9 +586,9 @@ ret_code_t ble_ess_magnetic_declination_update(ble_ess_t * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   mdf2d           New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
@@ -604,9 +604,9 @@ ret_code_t ble_ess_mfd2d_update(ble_ess_t                  * p_ess,
  *          enabled notifications. \ref BLE_CONN_HANDLE_ALL can be used as a connection handle
  *          to send notifications to all connected devices.
  *
- * @param[in]   p_ess          Battery Service structure.
- * @param[in]   battery_level  New battery measurement value (in percent of full capacity).
- * @param[in]   conn_handle    Connection handle.
+ * @param[in]   p_ess           Environmental Sensing Service structure.
+ * @param[in]   mdf3d           New battery measurement value (in percent of full capacity).
+ * @param[in]   conn_handle     Connection handle.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */

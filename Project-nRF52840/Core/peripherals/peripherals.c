@@ -20,17 +20,16 @@ static comm_handle_fptr m_eeprom_comm_handler;
 static comm_handle_fptr m_timer_barometer_handler;
 static comm_handle_fptr m_timer_environmental_handler;
 static comm_handle_fptr m_timer_eeprom_handler;
-static comm_handle_fptr m_timer_battery_handler;
+static comm_handle_fptr m_timer_ble_update_handler;
 static comm_handle_fptr m_timer_general_handler;
 
-APP_TIMER_DEF(m_battery_timer_id);                                                  /**< Battery timer. */
-APP_TIMER_DEF(m_loc_and_nav_timer_id);                                              /**< Location and navigation measurement timer. */
+APP_TIMER_DEF(m_ble_timer_id);                                                  /**< BLE timer. */
 
 
 static void baro_twi_event_handler(nrf_drv_twi_evt_t const * p_event, void * p_context);
 static void eep_twi_event_handler(nrf_drv_twi_evt_t const * p_event, void * p_context);
 static void env_spi_event_handler(nrf_drv_spi_evt_t const * p_event, void * p_context);
-static void battery_level_meas_timeout_handler(void * p_context);
+static void ble_update_timeout_handler(void * p_context);
 static void general_timer_event_handler(nrf_timer_event_t event_type, void* p_context);
 static void timer_ubx_event_handler(nrf_timer_event_t event_type, void* p_context);
 
@@ -111,9 +110,9 @@ static void timer_init(void)
     err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_create(&m_battery_timer_id,
+    err_code = app_timer_create(&m_ble_timer_id,
                                 APP_TIMER_MODE_REPEATED,
-                                battery_level_meas_timeout_handler);
+                                ble_update_timeout_handler);
     APP_ERROR_CHECK(err_code);
 
     err_code = nrf_drv_timer_init(&m_gen_timer, &timer_cfg, general_timer_event_handler);
@@ -150,7 +149,7 @@ void peripherals_start_timers(void)
     ret_code_t err_code;
 
     // Start application timers.
-    err_code = app_timer_start(m_battery_timer_id, BATTERY_LEVEL_MEAS_INTERVAL, NULL);
+    err_code = app_timer_start(m_ble_timer_id, BLE_UPDATE_INTERVAL, NULL);
     APP_ERROR_CHECK(err_code);
 
     nrf_drv_timer_enable(&m_gen_timer);
@@ -192,12 +191,12 @@ void peripherals_delay_ms(uint32_t delay_time_ms)
  * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
  *                       app_start_timer() call to the timeout handler.
  */
-static void battery_level_meas_timeout_handler(void * p_context)
+static void ble_update_timeout_handler(void * p_context)
 {
     UNUSED_PARAMETER(p_context);
-    if (NULL != m_timer_battery_handler)
+    if (NULL != m_timer_ble_update_handler)
     {
-        m_timer_battery_handler();
+        m_timer_ble_update_handler();
     }
 }
 
@@ -313,9 +312,9 @@ void peripherals_assign_comm_handle(uint8_t comm_handle_type, comm_handle_fptr c
                 break;
             }
 
-            case TIMER_BATTERY:
+            case TIMER_BLE_UPDATE:
             {
-                m_timer_battery_handler = comm_handle;
+                m_timer_ble_update_handler = comm_handle;
                 break;
             }
 

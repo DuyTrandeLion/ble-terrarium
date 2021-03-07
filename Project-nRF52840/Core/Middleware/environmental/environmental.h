@@ -11,9 +11,18 @@
 extern "C" {
 #endif
 
+typedef struct
+{
+    uint16_t temperature;
+    uint16_t humidity;
+    uint16_t pressure;
+    uint16_t gas_resistance;
+    uint32_t altitude;
+} env_data_t;
+
 void environmental_init(void);
 void environmental_read_sensor_data(void);
-void environmental_get_data(float *temperature, float *humidity, float *pressure, float *gas_resistance, float *altitude);
+void environmental_get_data(env_data_t *env_data);
 
 #ifdef __cplusplus
 }

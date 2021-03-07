@@ -125,17 +125,25 @@ void environmental_read_sensor_data(void)
     }
 }
 
-void environmental_get_data(float *temperature, float *humidity, float *pressure, float *gas_resistance, float *altitude)
+void environmental_get_data(env_data_t *env_data)
 {
     float res;
+    
+    float temperature_f;
+    float pressure_f;
+    float altitude_f;
 
-    *temperature = ((float)m_env_data.temperature) / 100.0;
-    *humidity = ((float)m_env_data.humidity) / 100.0;
-    *gas_resistance = ((float)m_env_data.gas_resistance) / 100.0;
-    *pressure = ((float)m_env_data.pressure) / 100.0;
+    temperature_f = ((float)m_env_data.temperature) / 100.0;
+    pressure_f = ((float)m_env_data.pressure) / 100.0;
 
-    res = *pressure / 1013.96;
+    res = pressure_f / 1013.96;
     res = pow(res, 0.19022);
     res = 1.0 - res;
-    *altitude = res * ((*temperature + 273.15) / 0.0065);
+    altitude_f = res * ((temperature_f + 273.15) / 0.0065);
+
+    env_data->temperature     = m_env_data.temperature;
+    env_data->humidity        = m_env_data.humidity;
+    env_data->gas_resistance  = m_env_data.gas_resistance;
+    env_data->pressure        = m_env_data.pressure;
+    env_data->altitude        = altitude_f * 100;
 }

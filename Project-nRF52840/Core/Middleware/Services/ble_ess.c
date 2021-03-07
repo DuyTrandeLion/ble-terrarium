@@ -234,6 +234,24 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     initial_wind_chill              = p_ess_init->initial_wind_chill;
     initial_barometric_pressure_trend = p_ess_init->initial_barometric_pressure_trend;
 
+    uint16_encode(p_ess_init->initial_apparent_wind_direction, initial_apparent_wind_direction);
+    uint16_encode(p_ess_init->initial_apparent_wind_speed, initial_apparent_wind_speed);
+    uint24_encode(p_ess_init->initial_elevation, initial_elevation);
+    uint16_encode(p_ess_init->initial_humidity, initial_humidity);
+    uint16_encode(p_ess_init->initial_irradiance, initial_irradiance);
+    uint24_encode(p_ess_init->initial_pollen_concentration, initial_pollen_concentration);
+    uint16_encode(p_ess_init->initial_rainfall, initial_rainfall);
+    uint32_encode(p_ess_init->initial_pressure, initial_pressure);
+    uint16_encode(p_ess_init->initial_temperature, initial_temperature);
+    uint16_encode(p_ess_init->initial_true_wind_direction, initial_true_wind_direction);
+    uint16_encode(p_ess_init->initial_true_wind_speed, initial_true_wind_speed);
+    uint16_encode(p_ess_init->initial_magnetic_declination, initial_magnetic_declination);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_2d.magnetic_flux_density_x, &initial_magnetic_flux_density_2d[2]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_2d.magnetic_flux_density_y, &initial_magnetic_flux_density_2d[0]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_y, &initial_magnetic_flux_density_3d[4]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_x, &initial_magnetic_flux_density_3d[2]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_z, &initial_magnetic_flux_density_3d[0]);
+
     // Add service
     BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_ENVIRONMENTAL_SENSING_SERVICE);
 
@@ -812,7 +830,24 @@ ret_code_t ble_ess_apparent_wind_direction_update(ble_ess_t * p_ess,
                                                   uint16_t    apparent_wind_direction,
                                                   uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -820,87 +855,309 @@ ret_code_t ble_ess_apparent_wind_speed_update(ble_ess_t * p_ess,
                                               uint16_t    apparent_wind_speed,
                                               uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
-ret_code_t ble_ess_apparent_dew_point_update(ble_ess_t * p_ess,
-                                             int8_t      dew_point,
-                                             uint16_t    conn_handle)
+ret_code_t ble_ess_dew_point_update(ble_ess_t * p_ess,
+                                    int8_t      dew_point,
+                                    uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
-ret_code_t ble_ess_apparent_elevation_update(ble_ess_t * p_ess,
-                                             int32_t     elevation,
-                                             uint16_t    conn_handle)
+ret_code_t ble_ess_elevation_update(ble_ess_t * p_ess,
+                                    int32_t     elevation,
+                                    uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
-ret_code_t ble_ess_apparent_gust_factor_update(ble_ess_t * p_ess,
-                                               uint8_t     gust_factor,
+ret_code_t ble_ess_gust_factor_update(ble_ess_t * p_ess,
+                                      uint8_t     gust_factor,
+                                      uint16_t    conn_handle)
+{
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+
+ret_code_t ble_ess_heat_index_update(ble_ess_t * p_ess,
+                                     int8_t      heat_index,
+                                     uint16_t    conn_handle)
+{
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+
+ret_code_t ble_ess_humidity_update(ble_ess_t * p_ess,
+                                   uint16_t    humidity,
+                                   uint16_t    conn_handle)
+{
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+
+ret_code_t ble_ess_irradiance_update(ble_ess_t * p_ess,
+                                     uint16_t    irradiance,
+                                     uint16_t    conn_handle)
+{
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+
+ret_code_t ble_ess_pollen_concentration_update(ble_ess_t * p_ess,
+                                               uint32_t    pollen_concentration,
                                                uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
-ret_code_t ble_ess_apparent_heat_index_update(ble_ess_t * p_ess,
-                                              int8_t      heat_index,
-                                              uint16_t    conn_handle)
+ret_code_t ble_ess_rainfall_update(ble_ess_t * p_ess,
+                                   uint16_t    rainfall,
+                                   uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
-ret_code_t ble_ess_apparent_humidity_update(ble_ess_t * p_ess,
-                                            uint16_t    humidity,
-                                            uint16_t    conn_handle)
+ret_code_t ble_ess_pressure_update(ble_ess_t * p_ess,
+                                   uint32_t    pressure,
+                                   uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
-ret_code_t ble_ess_apparent_irradiance_update(ble_ess_t * p_ess,
-                                              uint16_t    irradiance,
-                                              uint16_t    conn_handle)
+ret_code_t ble_ess_temperature_update(ble_ess_t * p_ess,
+                                      int16_t     temperature,
+                                      uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
-}
+    ret_code_t              err_code = NRF_SUCCESS;
+    ble_gatts_value_t       gatts_value;
 
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+        uint8_t encodded_temperature[MAX_TEMPERATURE_LENGTH];
 
-ret_code_t ble_ess_apparent_pollen_concentration_update(ble_ess_t * p_ess,
-                                                        uint32_t    pollen_concentration,
-                                                        uint16_t    conn_handle)
-{
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
 
-}
+        uint16_encode(temperature, encodded_temperature);
+        
+        gatts_value.len     = MAX_TEMPERATURE_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_temperature;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->tem_handles.value_handle,
+                                          &gatts_value);
 
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
 
-ret_code_t ble_ess_apparent_rainfall_update(ble_ess_t * p_ess,
-                                            uint16_t    rainfall,
-                                            uint16_t    conn_handle)
-{
+        // Send value if connected and notifying.
+        if (p_ess->is_twd_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
 
-}
+            memset(&hvx_params, 0, sizeof(hvx_params));
 
+            hvx_params.handle = p_ess->tem_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
 
-ret_code_t ble_ess_apparent_pressure_update(ble_ess_t * p_ess,
-                                            uint32_t    pressure,
-                                            uint16_t    conn_handle)
-{
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
 
-}
-
-
-ret_code_t ble_ess_apparent_temperature_update(ble_ess_t * p_ess,
-                                               int16_t     temperature,
-                                               uint16_t    conn_handle)
-{
-
+    return err_code;
 }
 
 
@@ -908,7 +1165,24 @@ ret_code_t ble_ess_true_wind_direction_update(ble_ess_t * p_ess,
                                               uint16_t    true_wind_direction,
                                               uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -916,7 +1190,24 @@ ret_code_t ble_ess_true_wind_speed_update(ble_ess_t * p_ess,
                                           uint16_t    true_wind_speed,
                                           uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -924,7 +1215,24 @@ ret_code_t ble_ess_uv_index_update(ble_ess_t * p_ess,
                                    uint8_t     uv_index,
                                    uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -932,7 +1240,24 @@ ret_code_t ble_ess_wind_chill_update(ble_ess_t * p_ess,
                                      int8_t      wind_chill,
                                      uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -940,7 +1265,24 @@ ret_code_t ble_ess_barometric_pressure_trend_update(ble_ess_t * p_ess,
                                                     uint8_t     barometric_pressure_trend,
                                                     uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -948,7 +1290,24 @@ ret_code_t ble_ess_magnetic_declination_update(ble_ess_t * p_ess,
                                                uint16_t    magnetic_declination,
                                                uint16_t    conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -956,7 +1315,24 @@ ret_code_t ble_ess_mfd2d_update(ble_ess_t                  * p_ess,
                                 magnetic_flux_density_2d_t   mdf2d,
                                 uint16_t                     conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
 
 
@@ -964,5 +1340,22 @@ ret_code_t ble_ess_mfd3d_update(ble_ess_t                  * p_ess,
                                 magnetic_flux_density_3d_t   mdf3d,
                                 uint16_t                     conn_handle)
 {
+    if (p_ess == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
 
+    ret_code_t         err_code = NRF_SUCCESS;
+    ble_gatts_value_t  gatts_value;
+
+    if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
 }
