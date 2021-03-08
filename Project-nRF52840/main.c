@@ -150,7 +150,8 @@ static ble_uuid_t   m_adv_uuids[] =                                             
 };
 static sensorsim_cfg_t   m_battery_sim_cfg;                                         /**< Battery Level sensor simulator configuration. */
 static sensorsim_state_t m_battery_sim_state;                                       /**< Battery Level sensor simulator state. */
-static env_data_t        m_env_data;
+static env_data_t        m_app_env_data;
+
 
 static void advertising_start(bool erase_bonds);
 
@@ -241,7 +242,7 @@ static void ble_update(void)
     uint8_t  battery_level;
 
     battery_level = (uint8_t)sensorsim_measure(&m_battery_sim_state, &m_battery_sim_cfg);
-    environmental_get_data(&m_env_data);
+    environmental_get_data(&m_app_env_data);
 
     err_code = ble_bas_battery_level_update(&m_bas, battery_level, BLE_CONN_HANDLE_ALL);
     if ((err_code != NRF_SUCCESS) &&
@@ -254,7 +255,40 @@ static void ble_update(void)
         APP_ERROR_HANDLER(err_code);
     }
 
-    err_code = ble_ess_temperature_update(&m_ess, m_env_data.temperature, m_conn_handle);
+    err_code = ble_ess_elevation_update(&m_ess, m_app_env_data.altitude);
+    if ((err_code != NRF_SUCCESS) &&
+        (err_code != NRF_ERROR_INVALID_STATE) &&
+        (err_code != NRF_ERROR_RESOURCES) &&
+        (err_code != NRF_ERROR_BUSY) &&
+        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+       )
+    {
+        APP_ERROR_HANDLER(err_code);
+    }
+
+    err_code = ble_ess_humidity_update(&m_ess, m_app_env_data.humidity / 10);
+    if ((err_code != NRF_SUCCESS) &&
+        (err_code != NRF_ERROR_INVALID_STATE) &&
+        (err_code != NRF_ERROR_RESOURCES) &&
+        (err_code != NRF_ERROR_BUSY) &&
+        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+       )
+    {
+        APP_ERROR_HANDLER(err_code);
+    }
+
+    err_code = ble_ess_pressure_update(&m_ess, m_app_env_data.pressure);
+    if ((err_code != NRF_SUCCESS) &&
+        (err_code != NRF_ERROR_INVALID_STATE) &&
+        (err_code != NRF_ERROR_RESOURCES) &&
+        (err_code != NRF_ERROR_BUSY) &&
+        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+       )
+    {
+        APP_ERROR_HANDLER(err_code);
+    }
+
+    err_code = ble_ess_temperature_update(&m_ess, m_app_env_data.temperature);
     if ((err_code != NRF_SUCCESS) &&
         (err_code != NRF_ERROR_INVALID_STATE) &&
         (err_code != NRF_ERROR_RESOURCES) &&
@@ -358,27 +392,23 @@ static void services_init(void)
 
     // Initialize Environmental Sensing Service.
     memset(&ess_init, 0, sizeof(ess_init));
-
-    ess_init.awd_cccd_rd_sec    = SEC_OPEN;
-    ess_init.aws_cccd_rd_sec    = SEC_OPEN;
-    ess_init.bpt_cccd_rd_sec    = SEC_OPEN;
-    ess_init.dp_cccd_rd_sec     = SEC_OPEN;
-    ess_init.el_cccd_rd_sec     = SEC_OPEN;
-    ess_init.gf_cccd_rd_sec     = SEC_OPEN;
-    ess_init.hi_cccd_rd_sec     = SEC_OPEN;
-    ess_init.hum_cccd_rd_sec    = SEC_OPEN;
-    ess_init.ird_cccd_rd_sec    = SEC_OPEN;
-    ess_init.md_cccd_rd_sec     = SEC_OPEN;
-    ess_init.mfd2d_cccd_rd_sec  = SEC_OPEN;
-    ess_init.mfd3d_cccd_rd_sec  = SEC_OPEN;
-    ess_init.pc_cccd_rd_sec     = SEC_OPEN;
-    ess_init.ps_cccd_rd_sec     = SEC_OPEN;
-    ess_init.rf_cccd_rd_sec     = SEC_OPEN;
-    ess_init.tem_cccd_rd_sec    = SEC_OPEN;
-    ess_init.twd_cccd_rd_sec    = SEC_OPEN;
-    ess_init.tws_cccd_rd_sec    = SEC_OPEN;
-    ess_init.uvi_cccd_rd_sec    = SEC_OPEN;
-    ess_init.wc_cccd_rd_sec     = SEC_OPEN;
+    
+    ess_init.el_rd_sec          = SEC_OPEN;
+    ess_init.el_cccd_wr_sec     = SEC_OPEN;
+    ess_init.hum_cccd_wr_sec    = SEC_OPEN;
+    ess_init.hum_rd_sec         = SEC_OPEN;
+    ess_init.ps_cccd_wr_sec     = SEC_OPEN;
+    ess_init.ps_rd_sec          = SEC_OPEN;
+    ess_init.tem_cccd_wr_sec    = SEC_OPEN;
+    ess_init.tem_rd_sec         = SEC_OPEN;
+    ess_init.uvi_cccd_wr_sec    = SEC_OPEN;
+    ess_init.uvi_rd_sec         = SEC_OPEN;
+    
+    ess_init.support_el_notification  = true;
+    ess_init.support_hum_notification = true;
+    ess_init.support_ps_notification  = true;
+    ess_init.support_tem_notification = true;
+    ess_init.support_uvi_notification = true;
 
     err_code = ble_ess_init(&m_ess, &ess_init);
     APP_ERROR_CHECK(err_code);

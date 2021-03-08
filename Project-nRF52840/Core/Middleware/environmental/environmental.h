@@ -14,9 +14,9 @@ extern "C" {
 typedef struct
 {
     uint16_t temperature;
-    uint16_t humidity;
-    uint16_t pressure;
-    uint16_t gas_resistance;
+    uint32_t humidity;
+    uint32_t pressure;
+    uint32_t gas_resistance;
     uint32_t altitude;
 } env_data_t;
 

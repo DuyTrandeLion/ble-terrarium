@@ -62,6 +62,8 @@
   <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_BLE"/>
   <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_BLE;ble_db_discovery"/>
   <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_BLE;common"/>
+  <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_BLE/nRF_BLE_Services"/>
+  <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_BLE/nRF_BLE_Services;ble_bas"/>
   <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_Libraries"/>
   <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_Libraries;util"/>
   <ProjectSessionItem path="Nordic-BLE;BLE-nRF52840;components/nRF_Serialization"/>
@@ -109,6 +111,8 @@
  <Watch1>
   <Watches active="1" update="Twice a Second">
    <Watchpoint expression="m_env_data" name="m_env_data" radix="10" linenumber="0" filename="C:/ble-terrarium"/>
+   <Watchpoint expression="m_app_env_data" name="m_app_env_data" radix="10" linenumber="0" filename="../ble-terrarium"/>
+   <Watchpoint expression="m_ess" name="m_ess" radix="-1" linenumber="0" filename="../ble-terrarium"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -121,19 +125,20 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="921" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/main.c" selected="1" top="899" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="131" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/environmental/environmental.c" selected="0" top="116" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="20" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/environmental/environmental.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="40" y="152" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/main.c" selected="1" top="109" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="136" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/environmental/environmental.c" selected="0" top="109" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="19" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/environmental/environmental.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="313" useTextEdit="1" openedFrom="C:/ble-terrarium/Project-nRF52840/Core/Middleware/environmental/environmental.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/peripherals/peripherals.c" selected="0" top="281" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="62" y="64" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/peripherals/peripherals.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/peripherals/peripherals.h" selected="0" top="46" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="378" useTextEdit="1" openedFrom="C:/ble-terrarium/Project-nRF52840/Core/Middleware/environmental/environmental.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Drivers/BME680_driver/bme680_defs.h" selected="0" top="362" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="155" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Drivers/BME680_driver/bme680.h" selected="0" top="141" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="669" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Drivers/BME680_driver/bme680.c" selected="0" top="628" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="71" y="1264" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.c" selected="0" top="1236" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="150" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/Services/ble_ess.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.h" selected="0" top="105" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="343" useTextEdit="1" openedFrom="C:/ble-terrarium/nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_srv_common.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_srv_common.h" selected="0" top="320" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="37" y="1034" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/nRF5_SDK_17.0.0_9d13099/components/serialization/connectivity/codecs/ant/serializers/ant_event_rx.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/libraries/util/app_util.h" selected="0" top="1132" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="293" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/Services/ble_ess.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/softdevice/s140/headers/ble_gatts.h" selected="0" top="273" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="64" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/peripherals/peripherals.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/peripherals/peripherals.h" selected="0" top="46" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="382" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/environmental/environmental.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Drivers/BME680_driver/bme680_defs.h" selected="0" top="362" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="293" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/main.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.c" selected="0" top="267" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="41" y="259" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/Services/ble_ess.c" useBinaryEdit="0" left="0" path="Project-nRF52840/Core/Middleware/Services/ble_ess.h" selected="0" top="241" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1034" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/nRF5_SDK_17.0.0_9d13099/components/serialization/connectivity/codecs/ant/serializers/ant_event_rx.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/libraries/util/app_util.h" selected="0" top="987" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="500" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_srv_common.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/softdevice/s140/headers/ble_gatts.h" selected="0" top="480" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="51" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/nRF5_SDK_17.0.0_9d13099/components/ble/ble_services/ble_bas/ble_bas.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_srv_common.c" selected="0" top="31" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="302" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/Services/ble_ess.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_srv_common.h" selected="0" top="281" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="71" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/ble/common/ble_conn_params.h" selected="0" top="56" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="218" useTextEdit="1" openedFrom="D:/Nordic-Embedded/ble-terrarium/Project-nRF52840/Core/Middleware/Services/ble_ess.c" useBinaryEdit="0" left="0" path="nRF5_SDK_17.0.0_9d13099/components/softdevice/s140/headers/ble_gatt.h" selected="0" top="192" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="BLE-nRF52840" fileDialogDefaultFilter="*" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 5.34/source/thumb_crt0.s&#xa;&#xa;D:/Nordic-Embedded/ble-rd/nRF5_SDK_17.0.0_9d13099/modules/nrfx/mdk/ses_startup_nrf52840.s&#xa;D:/Nordic-Embedded/ble-gnss/nRF5_SDK_17.0.0_9d13099/modules/nrfx/mdk/ses_startup_nrf52840.s" fileDialogInitialDirectory="C:/ble-terrarium/Project-nRF52840/Core/Middleware/Services" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="BLE-nRF52840" fileDialogDefaultFilter="*" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 5.34/source/thumb_crt0.s&#xa;&#xa;D:/Nordic-Embedded/ble-rd/nRF5_SDK_17.0.0_9d13099/modules/nrfx/mdk/ses_startup_nrf52840.s&#xa;D:/Nordic-Embedded/ble-gnss/nRF5_SDK_17.0.0_9d13099/modules/nrfx/mdk/ses_startup_nrf52840.s" fileDialogInitialDirectory="C:/ble-terrarium/Project-nRF52840/Core/Middleware/Services" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

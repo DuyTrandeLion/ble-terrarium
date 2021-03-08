@@ -246,11 +246,11 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     uint16_encode(p_ess_init->initial_true_wind_direction, initial_true_wind_direction);
     uint16_encode(p_ess_init->initial_true_wind_speed, initial_true_wind_speed);
     uint16_encode(p_ess_init->initial_magnetic_declination, initial_magnetic_declination);
-    uint16_encode(p_ess_init->initial_magnetic_flux_density_2d.magnetic_flux_density_x, &initial_magnetic_flux_density_2d[2]);
-    uint16_encode(p_ess_init->initial_magnetic_flux_density_2d.magnetic_flux_density_y, &initial_magnetic_flux_density_2d[0]);
-    uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_y, &initial_magnetic_flux_density_3d[4]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_2d.magnetic_flux_density_x, &initial_magnetic_flux_density_2d[0]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_2d.magnetic_flux_density_y, &initial_magnetic_flux_density_2d[2]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_y, &initial_magnetic_flux_density_3d[0]);
     uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_x, &initial_magnetic_flux_density_3d[2]);
-    uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_z, &initial_magnetic_flux_density_3d[0]);
+    uint16_encode(p_ess_init->initial_magnetic_flux_density_3d.magnetic_flux_density_z, &initial_magnetic_flux_density_3d[4]);
 
     // Add service
     BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_ENVIRONMENTAL_SENSING_SERVICE);
@@ -293,7 +293,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_awd_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_awd_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->awd_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->awd_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->awd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -320,7 +321,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_aws_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_aws_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->aws_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->aws_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->aws_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -347,7 +349,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_dp_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_dp_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->dp_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->dp_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->dp_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -374,7 +377,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_el_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_el_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->el_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->el_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->el_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -401,7 +405,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_gf_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_gf_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->gf_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->gf_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->gf_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -428,7 +433,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_hi_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_hi_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->hi_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->hi_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->hi_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -455,7 +461,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_hum_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_hum_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->hum_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->hum_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->hum_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -482,7 +489,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_ird_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_ird_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->ird_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->ird_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->ird_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -509,7 +517,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_pc_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_pc_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->pc_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->pc_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->pc_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -536,7 +545,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_rf_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_rf_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->rf_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->rf_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->rf_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -563,7 +573,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_ps_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_ps_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->ps_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->ps_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->ps_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -590,7 +601,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_tem_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_tem_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->tem_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->tem_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->tem_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -617,7 +629,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_twd_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_twd_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->twd_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->twd_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->twd_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -644,7 +657,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_tws_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_tws_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->tws_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->tws_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->tws_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -671,7 +685,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_uvi_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_uvi_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->uvi_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->uvi_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->uvi_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -698,7 +713,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_wc_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_wc_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->wc_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->wc_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->wc_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -725,7 +741,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_bpt_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_bpt_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->bpt_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->bpt_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->bpt_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -752,7 +769,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_md_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_md_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->md_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->md_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->md_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -779,7 +797,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_mfd2d_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_mfd2d_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->mfd2d_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->mfd2d_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->mfd2d_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -806,7 +825,8 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
     add_char_params.char_props.notify     = p_ess->is_mfd3d_notification_supported;
     add_char_params.char_ext_props.wr_aux = p_ess->is_mfd3d_writable_aux_supported;
     add_char_params.p_user_descr          = &user_descr_params;
-    add_char_params.read_access           = p_ess_init->mfd3d_cccd_rd_sec;
+    add_char_params.cccd_write_access     = p_ess_init->mfd3d_cccd_wr_sec;
+    add_char_params.read_access           = p_ess_init->mfd3d_rd_sec;
 
     err_code = characteristic_add(p_ess->service_handle,
                                   &add_char_params,
@@ -827,8 +847,7 @@ ret_code_t ble_ess_init(ble_ess_t * p_ess, const ble_ess_init_t * p_ess_init)
 
 
 ret_code_t ble_ess_apparent_wind_direction_update(ble_ess_t * p_ess,
-                                                  uint16_t    apparent_wind_direction,
-                                                  uint16_t    conn_handle)
+                                                  uint16_t    apparent_wind_direction)
 {
     if (p_ess == NULL)
     {
@@ -840,7 +859,42 @@ ret_code_t ble_ess_apparent_wind_direction_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_apparent_wind_direction[MAX_WIN_DIRECTION_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(apparent_wind_direction, encodded_apparent_wind_direction);
+        
+        gatts_value.len     = MAX_WIN_DIRECTION_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_apparent_wind_direction;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->awd_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_awd_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->awd_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -852,8 +906,7 @@ ret_code_t ble_ess_apparent_wind_direction_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_apparent_wind_speed_update(ble_ess_t * p_ess,
-                                              uint16_t    apparent_wind_speed,
-                                              uint16_t    conn_handle)
+                                              uint16_t    apparent_wind_speed)
 {
     if (p_ess == NULL)
     {
@@ -865,7 +918,42 @@ ret_code_t ble_ess_apparent_wind_speed_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_apparent_wind_speed[MAX_WIN_SPEED_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(apparent_wind_speed, encodded_apparent_wind_speed);
+        
+        gatts_value.len     = MAX_WIN_SPEED_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_apparent_wind_speed;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->aws_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_aws_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->aws_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -877,8 +965,7 @@ ret_code_t ble_ess_apparent_wind_speed_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_dew_point_update(ble_ess_t * p_ess,
-                                    int8_t      dew_point,
-                                    uint16_t    conn_handle)
+                                    int8_t      dew_point)
 {
     if (p_ess == NULL)
     {
@@ -890,7 +977,40 @@ ret_code_t ble_ess_dew_point_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_dew_point = dew_point;
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+        
+        gatts_value.len     = sizeof(encodded_dew_point);
+        gatts_value.offset  = 0;
+        gatts_value.p_value = &encodded_dew_point;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->dp_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_dp_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->dp_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -902,8 +1022,7 @@ ret_code_t ble_ess_dew_point_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_elevation_update(ble_ess_t * p_ess,
-                                    int32_t     elevation,
-                                    uint16_t    conn_handle)
+                                    int32_t     elevation)
 {
     if (p_ess == NULL)
     {
@@ -915,7 +1034,42 @@ ret_code_t ble_ess_elevation_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_elevation[MAX_ELEVATION_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint24_encode(elevation, encodded_elevation);
+        
+        gatts_value.len     = MAX_ELEVATION_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_elevation;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->el_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_el_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->el_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -927,8 +1081,7 @@ ret_code_t ble_ess_elevation_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_gust_factor_update(ble_ess_t * p_ess,
-                                      uint8_t     gust_factor,
-                                      uint16_t    conn_handle)
+                                      uint8_t     gust_factor)
 {
     if (p_ess == NULL)
     {
@@ -940,7 +1093,40 @@ ret_code_t ble_ess_gust_factor_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_gust_factor = gust_factor;
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+        
+        gatts_value.len     = sizeof(encodded_gust_factor);
+        gatts_value.offset  = 0;
+        gatts_value.p_value = &encodded_gust_factor;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->gf_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_gf_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->gf_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -952,8 +1138,7 @@ ret_code_t ble_ess_gust_factor_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_heat_index_update(ble_ess_t * p_ess,
-                                     int8_t      heat_index,
-                                     uint16_t    conn_handle)
+                                     int8_t      heat_index)
 {
     if (p_ess == NULL)
     {
@@ -965,7 +1150,40 @@ ret_code_t ble_ess_heat_index_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_heat_index = heat_index;
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+        
+        gatts_value.len     = sizeof(encodded_heat_index);
+        gatts_value.offset  = 0;
+        gatts_value.p_value = &encodded_heat_index;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->hi_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_hi_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->hi_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -977,8 +1195,7 @@ ret_code_t ble_ess_heat_index_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_humidity_update(ble_ess_t * p_ess,
-                                   uint16_t    humidity,
-                                   uint16_t    conn_handle)
+                                   uint16_t    humidity)
 {
     if (p_ess == NULL)
     {
@@ -990,7 +1207,42 @@ ret_code_t ble_ess_humidity_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_humidity[MAX_HUMIDITY_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(humidity, encodded_humidity);
+        
+        gatts_value.len     = MAX_HUMIDITY_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_humidity;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->hum_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_hum_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->hum_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1002,8 +1254,7 @@ ret_code_t ble_ess_humidity_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_irradiance_update(ble_ess_t * p_ess,
-                                     uint16_t    irradiance,
-                                     uint16_t    conn_handle)
+                                     uint16_t    irradiance)
 {
     if (p_ess == NULL)
     {
@@ -1015,7 +1266,42 @@ ret_code_t ble_ess_irradiance_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_irradiance[MAX_IRRADIANCE_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(irradiance, encodded_irradiance);
+        
+        gatts_value.len     = MAX_IRRADIANCE_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_irradiance;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->ird_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_ird_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->ird_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1027,8 +1313,7 @@ ret_code_t ble_ess_irradiance_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_pollen_concentration_update(ble_ess_t * p_ess,
-                                               uint32_t    pollen_concentration,
-                                               uint16_t    conn_handle)
+                                               uint32_t    pollen_concentration)
 {
     if (p_ess == NULL)
     {
@@ -1040,7 +1325,42 @@ ret_code_t ble_ess_pollen_concentration_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_pollen_concentration[MAX_POLLEN_CONCENTRATION_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint24_encode(pollen_concentration, encodded_pollen_concentration);
+        
+        gatts_value.len     = MAX_POLLEN_CONCENTRATION_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_pollen_concentration;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->pc_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_pc_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->pc_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1052,8 +1372,7 @@ ret_code_t ble_ess_pollen_concentration_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_rainfall_update(ble_ess_t * p_ess,
-                                   uint16_t    rainfall,
-                                   uint16_t    conn_handle)
+                                   uint16_t    rainfall)
 {
     if (p_ess == NULL)
     {
@@ -1065,7 +1384,42 @@ ret_code_t ble_ess_rainfall_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_rainfall[MAX_RAINFALL_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(rainfall, encodded_rainfall);
+        
+        gatts_value.len     = MAX_RAINFALL_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_rainfall;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->rf_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_rf_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->rf_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1077,8 +1431,7 @@ ret_code_t ble_ess_rainfall_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_pressure_update(ble_ess_t * p_ess,
-                                   uint32_t    pressure,
-                                   uint16_t    conn_handle)
+                                   uint32_t    pressure)
 {
     if (p_ess == NULL)
     {
@@ -1090,7 +1443,42 @@ ret_code_t ble_ess_pressure_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_pressure[MAX_PRESSURE_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint32_encode(pressure, encodded_pressure);
+        
+        gatts_value.len     = MAX_PRESSURE_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_pressure;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->ps_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_ps_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->ps_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1102,8 +1490,7 @@ ret_code_t ble_ess_pressure_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_temperature_update(ble_ess_t * p_ess,
-                                      int16_t     temperature,
-                                      uint16_t    conn_handle)
+                                      int16_t     temperature)
 {
     if (p_ess == NULL)
     {
@@ -1137,7 +1524,7 @@ ret_code_t ble_ess_temperature_update(ble_ess_t * p_ess,
         }
 
         // Send value if connected and notifying.
-        if (p_ess->is_twd_notification_supported)
+        if (p_ess->is_tem_notification_supported)
         {
             ble_gatts_hvx_params_t  hvx_params;
 
@@ -1162,8 +1549,7 @@ ret_code_t ble_ess_temperature_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_true_wind_direction_update(ble_ess_t * p_ess,
-                                              uint16_t    true_wind_direction,
-                                              uint16_t    conn_handle)
+                                              uint16_t    true_wind_direction)
 {
     if (p_ess == NULL)
     {
@@ -1175,7 +1561,42 @@ ret_code_t ble_ess_true_wind_direction_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_true_wind_direction[MAX_WIN_DIRECTION_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(true_wind_direction, encodded_true_wind_direction);
+        
+        gatts_value.len     = MAX_WIN_DIRECTION_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_true_wind_direction;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->twd_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_twd_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->twd_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1187,8 +1608,7 @@ ret_code_t ble_ess_true_wind_direction_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_true_wind_speed_update(ble_ess_t * p_ess,
-                                          uint16_t    true_wind_speed,
-                                          uint16_t    conn_handle)
+                                          uint16_t    true_wind_speed)
 {
     if (p_ess == NULL)
     {
@@ -1200,7 +1620,42 @@ ret_code_t ble_ess_true_wind_speed_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_true_wind_speed[MAX_WIN_SPEED_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(true_wind_speed, encodded_true_wind_speed);
+        
+        gatts_value.len     = MAX_HUMIDITY_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_true_wind_speed;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->tws_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_tws_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->tws_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1212,8 +1667,7 @@ ret_code_t ble_ess_true_wind_speed_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_uv_index_update(ble_ess_t * p_ess,
-                                   uint8_t     uv_index,
-                                   uint16_t    conn_handle)
+                                   uint8_t     uv_index)
 {
     if (p_ess == NULL)
     {
@@ -1225,7 +1679,40 @@ ret_code_t ble_ess_uv_index_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_uv_index = uv_index;
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        gatts_value.len     = sizeof(encodded_uv_index);
+        gatts_value.offset  = 0;
+        gatts_value.p_value = &encodded_uv_index;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->uvi_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_uvi_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->uvi_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1237,8 +1724,7 @@ ret_code_t ble_ess_uv_index_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_wind_chill_update(ble_ess_t * p_ess,
-                                     int8_t      wind_chill,
-                                     uint16_t    conn_handle)
+                                     int8_t      wind_chill)
 {
     if (p_ess == NULL)
     {
@@ -1250,7 +1736,40 @@ ret_code_t ble_ess_wind_chill_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_wind_chill = wind_chill;
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+        
+        gatts_value.len     = sizeof(encodded_wind_chill);
+        gatts_value.offset  = 0;
+        gatts_value.p_value = &encodded_wind_chill;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->wc_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_wc_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->wc_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1262,8 +1781,7 @@ ret_code_t ble_ess_wind_chill_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_barometric_pressure_trend_update(ble_ess_t * p_ess,
-                                                    uint8_t     barometric_pressure_trend,
-                                                    uint16_t    conn_handle)
+                                                    uint8_t     barometric_pressure_trend)
 {
     if (p_ess == NULL)
     {
@@ -1275,7 +1793,40 @@ ret_code_t ble_ess_barometric_pressure_trend_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_barometric_pressure_trend = barometric_pressure_trend;
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+        
+        gatts_value.len     = sizeof(encodded_barometric_pressure_trend);
+        gatts_value.offset  = 0;
+        gatts_value.p_value = &encodded_barometric_pressure_trend;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->bpt_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_bpt_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->bpt_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1287,8 +1838,7 @@ ret_code_t ble_ess_barometric_pressure_trend_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_magnetic_declination_update(ble_ess_t * p_ess,
-                                               uint16_t    magnetic_declination,
-                                               uint16_t    conn_handle)
+                                               uint16_t    magnetic_declination)
 {
     if (p_ess == NULL)
     {
@@ -1300,7 +1850,42 @@ ret_code_t ble_ess_magnetic_declination_update(ble_ess_t * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_magnetic_declination[MAX_MAGNETIC_DECLINATION_LENGTH];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+
+        uint16_encode(magnetic_declination, encodded_magnetic_declination);
+        
+        gatts_value.len     = MAX_MAGNETIC_DECLINATION_LENGTH;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_magnetic_declination;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->md_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_md_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->md_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1312,8 +1897,7 @@ ret_code_t ble_ess_magnetic_declination_update(ble_ess_t * p_ess,
 
 
 ret_code_t ble_ess_mfd2d_update(ble_ess_t                  * p_ess,
-                                magnetic_flux_density_2d_t   mdf2d,
-                                uint16_t                     conn_handle)
+                                magnetic_flux_density_2d_t   mdf2d)
 {
     if (p_ess == NULL)
     {
@@ -1325,7 +1909,43 @@ ret_code_t ble_ess_mfd2d_update(ble_ess_t                  * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_mdf2d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 2];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+        
+        uint16_encode(mdf2d.magnetic_flux_density_x, &encodded_mdf2d[0]);
+        uint16_encode(mdf2d.magnetic_flux_density_y, &encodded_mdf2d[2]);
+        
+        gatts_value.len     = MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 2;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_mdf2d;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->mfd2d_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_mfd2d_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->mfd2d_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
@@ -1337,8 +1957,7 @@ ret_code_t ble_ess_mfd2d_update(ble_ess_t                  * p_ess,
 
 
 ret_code_t ble_ess_mfd3d_update(ble_ess_t                  * p_ess,
-                                magnetic_flux_density_3d_t   mdf3d,
-                                uint16_t                     conn_handle)
+                                magnetic_flux_density_3d_t   mdf3d)
 {
     if (p_ess == NULL)
     {
@@ -1350,7 +1969,44 @@ ret_code_t ble_ess_mfd3d_update(ble_ess_t                  * p_ess,
 
     if (p_ess->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
+        uint8_t encodded_mdf3d[MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 3];
 
+        // Initialize value struct.
+        memset(&gatts_value, 0, sizeof(gatts_value));
+        
+        uint16_encode(mdf3d.magnetic_flux_density_x, &encodded_mdf3d[0]);
+        uint16_encode(mdf3d.magnetic_flux_density_y, &encodded_mdf3d[2]);
+        uint16_encode(mdf3d.magnetic_flux_density_z, &encodded_mdf3d[4]);
+        
+        gatts_value.len     = MAX_MAGNETIC_FLUX_DENSITY_LENGTH * 3;
+        gatts_value.offset  = 0;
+        gatts_value.p_value = encodded_mdf3d;
+        
+        // Update database.
+        err_code = sd_ble_gatts_value_set(p_ess->conn_handle,
+                                          p_ess->mfd3d_handles.value_handle,
+                                          &gatts_value);
+
+        if (err_code != NRF_SUCCESS)
+        {
+            return err_code;
+        }
+
+        // Send value if connected and notifying.
+        if (p_ess->is_mfd3d_notification_supported)
+        {
+            ble_gatts_hvx_params_t  hvx_params;
+
+            memset(&hvx_params, 0, sizeof(hvx_params));
+
+            hvx_params.handle = p_ess->mfd3d_handles.value_handle;
+            hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+            hvx_params.offset = gatts_value.offset;
+            hvx_params.p_len  = &gatts_value.len;
+            hvx_params.p_data = gatts_value.p_value;
+
+            err_code = sd_ble_gatts_hvx(p_ess->conn_handle, &hvx_params);
+        }
     }
     else
     {
