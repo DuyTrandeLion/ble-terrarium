@@ -82,6 +82,9 @@ ret_code_t env_peripherals_twi_rx(uint16_t device_address, uint8_t *data, uint16
 ret_code_t env_peripherals_spi_tx(uint8_t *data, uint16_t data_size);
 ret_code_t env_peripherals_spi_rx(uint8_t *data, uint16_t data_size);
 
+void uvi_read_adc(uint16_t *adc);
+void uvi_read_voltage(float *volt);
+
 void peripherals_delay_ms(uint32_t delay_time_ms);
 
 void comm_handle_polling(void);

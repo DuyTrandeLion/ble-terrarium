@@ -83,6 +83,7 @@
 
 #include "peripherals.h"
 #include "environmental.h"
+#include "uv.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -151,6 +152,7 @@ static ble_uuid_t   m_adv_uuids[] =                                             
 static sensorsim_cfg_t   m_battery_sim_cfg;                                         /**< Battery Level sensor simulator configuration. */
 static sensorsim_state_t m_battery_sim_state;                                       /**< Battery Level sensor simulator state. */
 static env_data_t        m_app_env_data;
+static uint8_t           m_uv_index;
 
 
 static void advertising_start(bool erase_bonds);
@@ -239,10 +241,11 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 static void ble_update(void)
 {
     ret_code_t err_code;
-    uint8_t  battery_level;
+    uint8_t battery_level;
 
     battery_level = (uint8_t)sensorsim_measure(&m_battery_sim_state, &m_battery_sim_cfg);
     environmental_get_data(&m_app_env_data);
+    uv_get_data(&m_uv_index);
 
     err_code = ble_bas_battery_level_update(&m_bas, battery_level, BLE_CONN_HANDLE_ALL);
     if ((err_code != NRF_SUCCESS) &&
@@ -289,6 +292,17 @@ static void ble_update(void)
     }
 
     err_code = ble_ess_temperature_update(&m_ess, m_app_env_data.temperature);
+    if ((err_code != NRF_SUCCESS) &&
+        (err_code != NRF_ERROR_INVALID_STATE) &&
+        (err_code != NRF_ERROR_RESOURCES) &&
+        (err_code != NRF_ERROR_BUSY) &&
+        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+       )
+    {
+        APP_ERROR_HANDLER(err_code);
+    }
+
+    err_code = ble_ess_uv_index_update(&m_ess, m_uv_index);
     if ((err_code != NRF_SUCCESS) &&
         (err_code != NRF_ERROR_INVALID_STATE) &&
         (err_code != NRF_ERROR_RESOURCES) &&

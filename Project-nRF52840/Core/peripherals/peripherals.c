@@ -10,6 +10,7 @@
 #include "nrf_drv_saadc.h"
 #include "nrf_drv_ppi.h"
 
+static uint16_t uvi_adc = 0;
 
 static const nrf_drv_twi_t m_baro_twi       = NRF_DRV_TWI_INSTANCE(BARO_TWI_INSTANCE);
 static const nrf_drv_twi_t m_eep_twi        = NRF_DRV_TWI_INSTANCE(EEP_TWI_INSTANCE);
@@ -91,8 +92,8 @@ static void saadc_init(void)
     ret_code_t err_code;
 
     nrf_saadc_channel_config_t uvi_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN1);
-    nrf_saadc_channel_config_t soil_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN2);
-    nrf_saadc_channel_config_t battery_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN3);
+    //nrf_saadc_channel_config_t soil_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN2);
+    //nrf_saadc_channel_config_t battery_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN3);
 
     err_code = nrf_drv_saadc_init(NULL, saadc_event_handler);
     APP_ERROR_CHECK(err_code);
@@ -100,11 +101,11 @@ static void saadc_init(void)
     err_code = nrf_drv_saadc_channel_init(0, &uvi_channel_config);
     APP_ERROR_CHECK(err_code);
 
-    err_code = nrf_drv_saadc_channel_init(1, &soil_channel_config);
-    APP_ERROR_CHECK(err_code);
+    //err_code = nrf_drv_saadc_channel_init(1, &soil_channel_config);
+    //APP_ERROR_CHECK(err_code);
 
-    err_code = nrf_drv_saadc_channel_init(2, &battery_channel_config);
-    APP_ERROR_CHECK(err_code);
+    //err_code = nrf_drv_saadc_channel_init(2, &battery_channel_config);
+    //APP_ERROR_CHECK(err_code);
 
     err_code = nrf_drv_saadc_buffer_convert(m_buffer_pool[0], SAMPLES_IN_BUFFER);
     APP_ERROR_CHECK(err_code);
@@ -245,15 +246,35 @@ void peripherals_delay_ms(uint32_t delay_time_ms)
 }
 
 
+void uvi_read_adc(uint16_t *adc)
+{
+    *adc = uvi_adc;
+}
+
+
+void uvi_read_voltage(float *volt)
+{
+    *volt = ((float)(uvi_adc) * 3.3) / ((float)(4096.0));
+}
+
+
 void saadc_event_handler(nrf_drv_saadc_evt_t const * p_event)
 {
     ret_code_t err_code;
+
+    uint32_t adc_sum = 0;
 
     if (p_event->type == NRF_DRV_SAADC_EVT_DONE)
     {
         err_code = nrf_drv_saadc_buffer_convert(p_event->data.done.p_buffer, SAMPLES_IN_BUFFER);
         APP_ERROR_CHECK(err_code);
+        
+        for (uint8_t adc_sample_count = 0; adc_sample_count < SAMPLES_IN_BUFFER; adc_sample_count++)
+        {
+            adc_sum += p_event->data.done.p_buffer[adc_sample_count];
+        }
 
+        uvi_adc = adc_sum / SAMPLES_IN_BUFFER;
     }
 }
 
