@@ -64,6 +64,8 @@ extern "C" {
 #define TIMER_BLE_UPDATE                (TIMER_EEP + 1)
 #define TIMER_GENERAL                   (TIMER_BLE_UPDATE + 1)
 
+#define SAMPLES_IN_BUFFER               24
+
 typedef void (*comm_handle_fptr)(void);
 
 void peripherals_init(void);

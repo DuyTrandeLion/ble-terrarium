@@ -7,12 +7,17 @@
 #include "nrf_drv_twi.h"
 #include "nrf_drv_spi.h"
 #include "nrf_drv_timer.h"
+#include "nrf_drv_saadc.h"
+#include "nrf_drv_ppi.h"
 
 
 static const nrf_drv_twi_t m_baro_twi       = NRF_DRV_TWI_INSTANCE(BARO_TWI_INSTANCE);
 static const nrf_drv_twi_t m_eep_twi        = NRF_DRV_TWI_INSTANCE(EEP_TWI_INSTANCE);
 static const nrf_drv_spi_t m_env_spi        = NRF_DRV_SPI_INSTANCE(ENV_SPI_INSTANCE);
 static const nrf_drv_timer_t m_gen_timer    = NRF_DRV_TIMER_INSTANCE(GENERAL_TIMER_INSTANACE);
+static nrf_ppi_channel_t     m_ppi_channel;
+
+static nrf_saadc_value_t     m_buffer_pool[2][SAMPLES_IN_BUFFER];
 
 static comm_handle_fptr m_barometer_comm_handler;
 static comm_handle_fptr m_environmental_comm_handler;
@@ -23,6 +28,7 @@ static comm_handle_fptr m_timer_eeprom_handler;
 static comm_handle_fptr m_timer_ble_update_handler;
 static comm_handle_fptr m_timer_general_handler;
 
+
 APP_TIMER_DEF(m_ble_timer_id);                                                  /**< BLE timer. */
 
 
@@ -32,6 +38,7 @@ static void env_spi_event_handler(nrf_drv_spi_evt_t const * p_event, void * p_co
 static void ble_update_timeout_handler(void * p_context);
 static void general_timer_event_handler(nrf_timer_event_t event_type, void* p_context);
 static void timer_ubx_event_handler(nrf_timer_event_t event_type, void* p_context);
+static void saadc_event_handler(nrf_drv_saadc_evt_t const * p_event);
 
 static void gpio_init(void);
 static void pwm_init(void);
@@ -53,9 +60,57 @@ static void pwm_init(void)
 }
 
 
+void saadc_sampling_event_init(void)
+{
+    ret_code_t err_code;
+    int32_t timer_compare_event_addr;
+    uint32_t saadc_sample_task_addr;
+
+    err_code = nrf_drv_ppi_init();
+    APP_ERROR_CHECK(err_code);
+
+    timer_compare_event_addr = nrf_drv_timer_compare_event_address_get(&m_gen_timer, NRF_TIMER_CC_CHANNEL0);
+    saadc_sample_task_addr   = nrf_drv_saadc_sample_task_get();
+
+    /* setup ppi channel so that timer compare event is triggering sample task in SAADC */
+    err_code = nrf_drv_ppi_channel_alloc(&m_ppi_channel);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_ppi_channel_assign(m_ppi_channel,
+                                          timer_compare_event_addr,
+                                          saadc_sample_task_addr);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_ppi_channel_enable(m_ppi_channel);
+    APP_ERROR_CHECK(err_code);
+}
+
+
 static void saadc_init(void)
 {
+    ret_code_t err_code;
 
+    nrf_saadc_channel_config_t uvi_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN1);
+    nrf_saadc_channel_config_t soil_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN2);
+    nrf_saadc_channel_config_t battery_channel_config = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN3);
+
+    err_code = nrf_drv_saadc_init(NULL, saadc_event_handler);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_channel_init(0, &uvi_channel_config);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_channel_init(1, &soil_channel_config);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_channel_init(2, &battery_channel_config);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_buffer_convert(m_buffer_pool[0], SAMPLES_IN_BUFFER);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_buffer_convert(m_buffer_pool[1], SAMPLES_IN_BUFFER);
+    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -131,6 +186,9 @@ void peripherals_init(void)
     gpio_init();
     nrf_delay_ms(10);
 
+    saadc_init();
+    nrf_delay_ms(10);
+
     twi_init();
     nrf_delay_ms(10);
 
@@ -138,6 +196,9 @@ void peripherals_init(void)
     nrf_delay_ms(10);
 
     timer_init();
+    nrf_delay_ms(10);
+
+    saadc_sampling_event_init();
     nrf_delay_ms(10);
 }
 
@@ -181,6 +242,19 @@ ret_code_t env_peripherals_spi_rx(uint8_t *data, uint16_t data_size)
 void peripherals_delay_ms(uint32_t delay_time_ms)
 {
     nrf_delay_ms(delay_time_ms);
+}
+
+
+void saadc_event_handler(nrf_drv_saadc_evt_t const * p_event)
+{
+    ret_code_t err_code;
+
+    if (p_event->type == NRF_DRV_SAADC_EVT_DONE)
+    {
+        err_code = nrf_drv_saadc_buffer_convert(p_event->data.done.p_buffer, SAMPLES_IN_BUFFER);
+        APP_ERROR_CHECK(err_code);
+
+    }
 }
 
 
